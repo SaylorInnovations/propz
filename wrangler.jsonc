@@ -1,0 +1,21 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "propz",
+  // Pinned to what the installed wrangler/miniflare's bundled workerd binary
+  // actually supports (checked via a local dev-server boot). A newer date
+  // here than the binary understands fails startup outright — bump this only
+  // together with a `wrangler`/`miniflare` upgrade.
+  "compatibility_date": "2026-05-22",
+  "compatibility_flags": [
+    "nodejs_compat"
+  ],
+  "main": "./worker/index.ts",
+  "assets": {
+    "directory": "dist/client",
+    "not_found_handling": "none",
+    "binding": "ASSETS"
+  },
+  "images": {
+    "binding": "IMAGES"
+  }
+}
