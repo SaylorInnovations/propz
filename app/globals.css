@@ -240,6 +240,8 @@ label textarea + small { position: absolute; right: 11px; bottom: 9px; color: #5
 .qr-output-preview { display: flex; align-items: center; gap: 16px; margin-top: 13px; padding: 16px; border: 1px solid var(--line); border-radius: 12px; background: #020711; }
 .qr-output-preview img { width: 96px; height: 96px; border-radius: 8px; background: #fff; padding: 6px; flex-shrink: 0; }
 .qr-output-preview p { margin: 0; color: #8ca4bf; font-size: 10px; line-height: 1.6; }
+.widget-note { margin: 12px 0 0; color: #8ca4bf; font-size: 10px; line-height: 1.6; }
+.widget-note code { color: var(--cyan); font-family: var(--font-mono); }
 .qr-download { display: inline-flex; align-items: center; gap: 7px; margin-top: 12px; color: var(--cyan); font-size: 10px; }
 .qr-download svg { width: 13px; }
 .code-output { display: grid; grid-template-columns: 1fr auto; align-items: stretch; margin-top: 13px; min-height: 76px; border: 1px solid var(--line); border-radius: 12px; overflow: hidden; background: #020711; }

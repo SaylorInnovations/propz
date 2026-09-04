@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Brand } from "./components/brand";
-import { BoltIcon, CheckIcon, CodeIcon, CopyIcon, ExternalIcon, QrIcon, WalletIcon } from "./components/icons";
+import { BoltIcon, CheckIcon, CodeIcon, CopyIcon, ExternalIcon, QrIcon, WalletIcon, WidgetIcon } from "./components/icons";
 import { TipJar } from "./components/tipjar";
 import { FEE_PERCENT_LABEL } from "./lib/fee";
 import {
@@ -14,7 +14,11 @@ import {
   validSolanaAddress,
 } from "./lib/tip";
 
-type OutputTab = "embed" | "link" | "qr" | "agent";
+type OutputTab = "embed" | "widget" | "link" | "qr" | "agent";
+
+function escapeAttr(value: string) {
+  return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
 
 export default function Studio() {
   const [config, setConfig] = useState<TipConfig>(defaultConfig);
@@ -29,6 +33,14 @@ export default function Studio() {
   const manifestUrl = `${origin}/api/manifest?${params}`;
   const qrUrl = `${origin}/api/qr?${params}`;
   const embedCode = `<iframe src="${embedUrl}" title="Send Propz to ${config.name}" width="100%" height="430" style="border:0;max-width:440px" loading="lazy"></iframe>`;
+  const widgetAttrs = useMemo(
+    () =>
+      Array.from(configParams(config).entries())
+        .map(([key, value]) => `data-${key}="${escapeAttr(value)}"`)
+        .join(" "),
+    [config],
+  );
+  const widgetCode = `<script src="${origin}/widget.js" ${widgetAttrs} async></script>`;
   const solValid = !config.solana || validSolanaAddress(config.solana);
   const baseValid = !config.base || validEvmAddress(config.base);
   const ready = Boolean(origin && (validSolanaAddress(config.solana) || validEvmAddress(config.base)));
@@ -42,6 +54,14 @@ export default function Studio() {
     setCopied(label);
     window.setTimeout(() => setCopied(""), 1800);
   }
+
+  const outputCode: Record<OutputTab, string> = {
+    embed: embedCode,
+    widget: widgetCode,
+    link: jarUrl,
+    qr: qrUrl,
+    agent: manifestUrl,
+  };
 
   return (
     <main>
@@ -140,6 +160,7 @@ export default function Studio() {
           <div className="output-box">
             <div className="output-tabs" role="tablist" aria-label="Publish options">
               <button className={tab === "embed" ? "active" : ""} onClick={() => setTab("embed")} type="button"><CodeIcon /> Embed</button>
+              <button className={tab === "widget" ? "active" : ""} onClick={() => setTab("widget")} type="button"><WidgetIcon /> Floating widget</button>
               <button className={tab === "link" ? "active" : ""} onClick={() => setTab("link")} type="button"><ExternalIcon /> Hosted link</button>
               <button className={tab === "qr" ? "active" : ""} onClick={() => setTab("qr")} type="button"><QrIcon /> QR image</button>
               <button className={tab === "agent" ? "active" : ""} onClick={() => setTab("agent")} type="button"><BoltIcon /> Agent JSON</button>
@@ -152,11 +173,19 @@ export default function Studio() {
               </div>
             )}
             <div className="code-output">
-              <code>{!ready ? "Add a valid Solana or Base wallet above to generate your publish code." : tab === "embed" ? embedCode : tab === "link" ? jarUrl : tab === "qr" ? qrUrl : manifestUrl}</code>
-              <button disabled={!ready} onClick={() => copy(tab === "embed" ? embedCode : tab === "link" ? jarUrl : tab === "qr" ? qrUrl : manifestUrl, tab)} type="button">
+              <code>{!ready ? "Add a valid Solana or Base wallet above to generate your publish code." : outputCode[tab]}</code>
+              <button disabled={!ready} onClick={() => copy(outputCode[tab], tab)} type="button">
                 {copied === tab ? <CheckIcon /> : <CopyIcon />}{copied === tab ? "Copied" : "Copy"}
               </button>
             </div>
+            {ready && tab === "widget" && (
+              <p className="widget-note">
+                Drop this one <code>{"<script>"}</code> tag anywhere on your page — a floating button that stays fixed
+                in the corner as visitors scroll, the same way saylorinnovations.com&apos;s own floating
+                &quot;Free Consultation&quot; button does. Unlike that one, clicking it doesn&apos;t navigate away — it
+                opens the tip card right there, in place.
+              </p>
+            )}
             {ready && tab === "qr" && (
               <a className="qr-download" href={qrUrl} download={`propz-${config.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase() || "qr"}.png`}>
                 <ExternalIcon /> Download PNG

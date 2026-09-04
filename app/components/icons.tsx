@@ -41,3 +41,7 @@ export function BoltIcon(props: IconProps) {
 export function QrIcon(props: IconProps) {
   return <svg {...base} {...props}><rect x="4" y="4" width="6" height="6" rx="1" /><rect x="14" y="4" width="6" height="6" rx="1" /><rect x="4" y="14" width="6" height="6" rx="1" /><path d="M14 14h3v3" /><path d="M20 14v.01" /><path d="M14 20v.01" /><path d="M20 20v.01" /><path d="M17 17v.01" /></svg>;
 }
+
+export function WidgetIcon(props: IconProps) {
+  return <svg {...base} {...props}><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z" /></svg>;
+}
