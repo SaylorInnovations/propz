@@ -18,6 +18,12 @@
   "images": {
     "binding": "IMAGES"
   },
+  // Backs the browser extension's page registrations (URL -> tip jar
+  // config), so a creator's own tip button shows for every visitor with
+  // the extension installed, not just the person who registered it.
+  "kv_namespaces": [
+    { "binding": "PROPZ_PAGES", "id": "468faabfb7cd449b8499a7b0e75a8a9a" }
+  ],
   // saylorinnovations.com's zone already lives on this Cloudflare account
   // (confirmed via DNS — its nameservers are Cloudflare's), so this just
   // needs `wrangler deploy` to run once authenticated; Cloudflare

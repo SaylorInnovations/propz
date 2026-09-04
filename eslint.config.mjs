@@ -12,6 +12,11 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Plain browser-extension JS, loaded via <script> tags with no bundler —
+    // cross-file globals (validators.js's functions used by onboarding.js
+    // and popup.js) are real, not the unused-var/import issues this
+    // Next.js/React ruleset is built to catch.
+    "extension/**",
   ]),
 ]);
 

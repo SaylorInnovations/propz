@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Propz</title>
+<link rel="stylesheet" href="shared.css">
+<style>
+  body { width: 300px; padding: 18px; }
+  .row { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
+  .row .mark { margin: 0; width: 22px; height: 22px; flex: none; }
+  .row h1 { margin: 0; text-align: left; font-size: 15px; }
+  .status { font-size: 12px; color: var(--silver); margin: 0 0 14px; word-break: break-word; }
+  .status.live { color: var(--cyan); }
+  .status.other { color: var(--silver); }
+  .spinner { text-align: center; color: var(--silver); font-size: 12px; padding: 20px 0; }
+</style>
+</head>
+<body>
+  <div class="row">
+    <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+      <path d="M9 40V9h16c9.1 0 15 5.3 15 13.5S34.1 36 25 36H18"/>
+      <path d="M15 31V16h10c4.5 0 7.5 2.5 7.5 6.5S29.5 29 25 29h-4"/>
+      <circle cx="40" cy="9" r="2.8"/><circle cx="9" cy="40" r="2.8"/><circle cx="21" cy="29" r="2.3"/>
+    </svg>
+    <h1>Propz</h1>
+  </div>
+
+  <div id="loading" class="spinner">Checking this page…</div>
+
+  <div id="need-profile" class="state">
+    <p class="status">Set up your name and wallet first — takes about 20 seconds.</p>
+    <button class="primary" id="setup-btn" type="button">Set up Propz</button>
+  </div>
+
+  <div id="not-registered" class="state">
+    <p class="status" id="not-registered-text"></p>
+    <button class="primary" id="enable-btn" type="button">Show my tip button on this page</button>
+    <p class="fee-line">0.08% platform fee, disclosed to supporters — the rest goes straight to you.</p>
+  </div>
+
+  <div id="registered-mine" class="state">
+    <p class="status live">✓ Live on this page as <span id="mine-name"></span></p>
+    <button class="secondary danger" id="revert-btn" type="button">Revert — remove from this page</button>
+  </div>
+
+  <div id="registered-other" class="state">
+    <p class="status other">This page already has a Propz tip button set up (not by this browser).</p>
+  </div>
+
+  <p class="note"><a href="https://propz.saylorinnovations.com/" target="_blank">Build a full Propz card →</a> · <a href="#" id="edit-link">Edit my profile</a></p>
+
+  <script src="validators.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

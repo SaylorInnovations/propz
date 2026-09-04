@@ -57,7 +57,7 @@ export function TipJar({
         : asset;
 
   const options = useMemo(
-    () => effectiveAsset === "SOL" ? ["0.01", "0.05", "0.1", "0.25"] : ["1", "5", "10", "25"],
+    () => effectiveAsset === "SOL" ? ["0.01", "0.05", "0.1", "0.25", "1"] : ["1", "5", "10", "25"],
     [effectiveAsset],
   );
 
@@ -221,7 +221,7 @@ export function TipJar({
             {baseReady && <button className={effectiveAsset === "USDC_BASE" ? "active" : ""} onClick={() => selectAsset("USDC_BASE")} type="button">USDC <span>Base</span></button>}
           </div>
 
-          <div className="amount-grid" aria-label="Choose tip amount">
+          <div className="amount-grid" aria-label="Choose tip amount" style={{ gridTemplateColumns: `repeat(${options.length}, 1fr)` }}>
             {options.map((value) => (
               <button className={!custom && amount === value ? "active" : ""} key={value} onClick={() => { setAmount(value); setCustom(""); }} type="button">
                 {effectiveAsset === "SOL" ? value : `$${value}`}

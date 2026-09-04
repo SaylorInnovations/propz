@@ -1,0 +1,46 @@
+:root {
+  --bg: #010718;
+  --panel: #0a1628;
+  --line: rgba(199, 203, 212, 0.14);
+  --cyan: #18dff2;
+  --white: #f8fbff;
+  --silver: #9aa8bd;
+  --error: #ff6b81;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background: var(--bg);
+  color: var(--white);
+  font: 14px/1.5 -apple-system, "Segoe UI", system-ui, sans-serif;
+}
+.mark { display: block; width: 30px; height: 30px; margin: 0 auto 10px; }
+.mark path { fill: none; stroke: var(--cyan); stroke-width: 4.4; stroke-linecap: round; stroke-linejoin: round; }
+.mark circle { fill: var(--cyan); }
+h1 { font-size: 17px; font-weight: 700; margin: 0 0 4px; text-align: center; }
+.sub { color: var(--silver); font-size: 12px; text-align: center; margin: 0 0 20px; }
+label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.04em; text-transform: uppercase; color: var(--silver); margin: 14px 0 6px; }
+input {
+  width: 100%; background: var(--panel); border: 1px solid var(--line); border-radius: 9px;
+  color: var(--white); padding: 10px 12px; font-size: 13px; font-family: inherit;
+}
+input:focus { outline: none; border-color: var(--cyan); }
+input.err { border-color: var(--error); }
+.hint { font-size: 10px; color: var(--silver); margin-top: 4px; }
+.error-text { font-size: 10px; color: var(--error); margin-top: 4px; display: none; }
+.error-text.show { display: block; }
+button.primary {
+  width: 100%; margin-top: 18px; padding: 11px; border-radius: 9px; border: 0;
+  background: var(--cyan); color: #012; font-weight: 700; font-size: 13px; cursor: pointer;
+}
+button.primary:disabled { opacity: 0.4; cursor: not-allowed; }
+button.secondary {
+  width: 100%; margin-top: 8px; padding: 10px; border-radius: 9px; border: 1px solid var(--line);
+  background: transparent; color: var(--white); font-size: 12px; cursor: pointer;
+}
+button.danger { border-color: rgba(255, 107, 129, 0.4); color: var(--error); }
+.note { font-size: 10px; color: var(--silver); text-align: center; margin-top: 16px; line-height: 1.6; }
+.note a { color: var(--cyan); text-decoration: none; }
+.state { display: none; }
+.state.active { display: block; }
+.fee-line { font-size: 10px; color: var(--silver); text-align: center; margin-top: 10px; }
