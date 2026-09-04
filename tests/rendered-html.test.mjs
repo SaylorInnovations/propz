@@ -32,7 +32,7 @@ test("renders the Propz creator studio and social metadata", async () => {
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
   assert.match(html, /<title>Propz — Give credit\. Send value\.<\/title>/);
   assert.match(html, /Give credit\./);
-  assert.match(html, /https:\/\/propz\.saylorinnovations\.chatgpt\.site\/og\.png/);
+  assert.match(html, /https:\/\/propz\.saylorinnovations\.com\/og\.png/);
   assert.doesNotMatch(html, /codex-preview/);
 });
 

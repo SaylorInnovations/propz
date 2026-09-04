@@ -17,5 +17,12 @@
   },
   "images": {
     "binding": "IMAGES"
-  }
+  },
+  // saylorinnovations.com's zone already lives on this Cloudflare account
+  // (confirmed via DNS — its nameservers are Cloudflare's), so this just
+  // needs `wrangler deploy` to run once authenticated; Cloudflare
+  // provisions the DNS record for the custom domain itself.
+  "routes": [
+    { "pattern": "propz.saylorinnovations.com", "custom_domain": true }
+  ]
 }

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://propz.saylorinnovations.chatgpt.site"),
+  metadataBase: new URL("https://propz.saylorinnovations.com"),
   title: "Propz — Give credit. Send value.",
   description:
     "Tip your favorite creators, gamers, builders, streamers, artists, and communities with SOL or USDC sent directly to their wallet.",
