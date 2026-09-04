@@ -93,10 +93,12 @@ npm install    # or `npm run install:ci` on Linux — see Platform support above
 npm run dev    # start the Vite/vinext dev server
 ```
 
-Copy `.env.example` to `.env` and set `SOLANA_RPC_URL` to a paid RPC
-endpoint (Helius, Triton, etc.) before going live — the public
-`clusterApiUrl("mainnet-beta")` fallback works for local testing only and
-rate-limits quickly.
+Copy `.env.example` to `.env` and set `SOLANA_RPC_URL` before going live —
+the public `clusterApiUrl("mainnet-beta")` fallback works for local testing
+only; Cloudflare Workers' shared egress IPs get outright blocked by it in
+production. Production is currently on `https://solana-rpc.publicnode.com`
+(free, no signup, load-tested clean); move to a paid provider (Helius,
+Triton, etc.) if usage ever outgrows that. See `.env.example` for details.
 
 ## Build & deploy
 
