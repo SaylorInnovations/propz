@@ -55,6 +55,16 @@ export default defineConfig(async () => {
         ? { watch: { useFsEvents: false, usePolling: true } }
         : {}),
     },
+    // @solana/web3.js pulls in rpc-websockets (for account-change
+    // subscriptions this app never uses) and @solana/codecs, neither of
+    // which publish a "workerd" package.json export condition. Vite's dev
+    // dependency pre-bundler resolves against the same conditions as the
+    // Workers runtime it's emulating and fails outright on that gap; the
+    // production build doesn't hit this (different resolution path), so
+    // this only needs to be excluded from dev-time pre-bundling.
+    optimizeDeps: {
+      exclude: ["rpc-websockets", "@solana/codecs"],
+    },
     plugins: [
       vinext(),
       sites(),

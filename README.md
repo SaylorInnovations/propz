@@ -126,6 +126,15 @@ empty and D1 is optional infrastructure this app doesn't currently need.
 | `app/api/qr/route.ts` | Static downloadable QR PNG (`/api/qr`) |
 | `public/propz-logo.png`, `propz-logo.svg`, `favicon.svg`, `og.png` | Brand assets — overwrite in place to rebrand |
 
+## Framework version
+
+Pinned to `vinext@1.0.0-beta.9`. An earlier pin (`0.0.50`) had an
+intermittent crash in its background page-cache write path
+(`ReferenceError: __filename is not defined`) that could take down the
+whole `vinext start` process under load; `1.0.0-beta.9` fixed it — verified
+by running `build`, `test`, `dev`, and a concurrent multi-route burst
+against `start` with none of them reproducing it.
+
 ## Security notes
 
 - Propz never asks for a seed phrase or private key — only public receiving
