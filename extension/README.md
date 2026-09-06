@@ -65,37 +65,44 @@ just use that browser's equivalent of `chrome://extensions`.
 
 ## Publishing it for real
 
-This repo only contains the *source*. Actually publishing to the Chrome Web
-Store needs a Google developer account (one-time $5 registration fee) that
-only you can create — nothing here can do that step for you. Once you have
-one:
+This repo only contains the *source*. Every store below needs its own
+developer account, created and paid for (where there's a fee) by whoever
+will own the listing — nothing in this repo can do that step for you. Once
+an account exists, `bash scripts/build-extension.sh` builds the packages
+each submission actually uploads:
 
-1. Zip the contents of this folder (not the folder itself — the manifest
-   needs to be at the zip's root).
-2. Upload it at the [Chrome Web Store Developer
-   Dashboard](https://chrome.google.com/webstore/devconsole).
-3. You'll need a short listing description, a few screenshots, and a
-   privacy policy URL — Chrome's submission form rejects broad-host-permission
-   extensions outright without one. Use
-   `https://propz.saylorinnovations.com/extension/privacy`
-   (`app/extension/privacy/page.tsx`) once it's deployed; keep it in sync by
-   hand if what the extension collects ever changes. Worth knowing going in: the
-   `host_permissions` covering every http/https page (required for the
-   automatic-detection behavior to work anywhere) puts this in Chrome's
-   most-scrutinized review tier — expect the review to take longer and ask
-   follow-up questions about why that scope is needed. The honest answer
-   (this repo's whole README) is the answer.
-4. Firefox and Safari both need their own separate submissions with their
-   own review processes — not covered here; ask if you want that too.
+- `dist-store/propz-extension-store.zip` — Chrome Web Store, Edge Add-ons,
+  and the Gumroad mirror all use this exact same package.
+- `dist-store/propz-extension-firefox.zip` — Firefox Add-ons (AMO) only; it
+  swaps in `manifest.firefox.json` (background script instead of a service
+  worker, plus the `browser_specific_settings.gecko` block AMO requires).
+
+Both zips are gitignored (`dist-store/` — same as `dist/`) since they're
+regenerated from source, not committed artifacts.
+
+| Store | Fee | Listing draft | Notes |
+|---|---|---|---|
+| [Chrome Web Store](https://chrome.google.com/webstore/devconsole) | $5 one-time | `store/LISTING.md` | Broad host permission (`http://*/*`, `https://*/*`) puts this in Chrome's most-scrutinized review tier — expect follow-up questions about why; the honest answer is this README. |
+| [Edge Add-ons](https://partner.microsoft.com/dashboard/microsoftedge/) | Free | `store/LISTING-edge.md` | Same package as Chrome (Chromium/MV3-compatible); form closely mirrors Chrome's. |
+| [Firefox Add-ons (AMO)](https://addons.mozilla.org/developers/) | Free | `store/LISTING-firefox.md` | Uses the firefox zip above; verify `world: "MAIN"` scripting actually works on a real Firefox build before submitting (see that file). |
+| [Gumroad](https://gumroad.com/) | Free (list at $0 / pay-what-you-want) | `store/LISTING-gumroad.md` | Not a real extension store — no review, no auto-update. A direct-download mirror only; keep the official store listings as the primary install path once they're live, and update the placeholder links in that file once they are. |
+| Safari (App Store) | $99/year Apple Developer Program | — | Needs a Mac with Xcode: run Apple's `safari-web-extension-converter` against this `extension/` folder to generate a wrapper macOS app, then submit that through App Store Connect. Not something buildable from this repo alone — nothing here has macOS/Xcode access. Ask again once you're on a Mac with a Developer Program account and this can be worked through step by step. |
+
+All four non-Safari listing drafts share the same privacy policy URL:
+`https://propz.saylorinnovations.com/extension/privacy`
+(`app/extension/privacy/page.tsx`) — confirmed live. Keep it in sync by hand
+if what the extension collects ever changes.
 
 ## Files
 
 | File | Purpose |
 |---|---|
-| `manifest.json` | MV3 manifest — permissions, content script registration |
-| `background.js` | Service worker: all network calls, and the widget-mounting logic (`mountPropzWidget`) that gets injected into pages |
+| `manifest.json` | MV3 manifest for Chrome/Edge/Gumroad — permissions, content script registration |
+| `manifest.firefox.json` | Firefox variant — `background.scripts` instead of `service_worker`, plus the `gecko` id AMO requires. Swapped in at build time, never shipped as-is. |
+| `background.js` | Service worker: all network calls, and the widget-mounting logic (`syncPropzWidget`) that gets injected into pages |
 | `content.js` | Runs on every page; just pings the background worker |
 | `popup.html` / `popup.js` | Toolbar icon popup — shows/edits this page's registration |
 | `onboarding.html` / `onboarding.js` | First-run setup (name + wallet) |
 | `validators.js` | Mirrors `app/lib/tip.ts`'s address validators — kept in sync by hand, no shared build step |
 | `icons/` | Rendered from `public/favicon.svg` at 16/48/128px |
+| `store/` | Chrome Web Store submission draft (`LISTING.md`) plus screenshot — see "Publishing it for real" above for the other stores' drafts |
