@@ -1,12 +1,12 @@
 import { TipJar } from "../components/tipjar";
-import { readConfig } from "../lib/tip";
+import { resolveConfig } from "../lib/handle-store";
 
 export default async function EmbedPage({
   searchParams,
 }: {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const config = readConfig(await searchParams);
+  const config = await resolveConfig(await searchParams);
   return (
     <main className="embed-page">
       <TipJar compact config={config} />

@@ -126,6 +126,10 @@ empty and D1 is optional infrastructure this app doesn't currently need.
 | `app/api/pay/solana/route.ts` | Solana Pay transaction-request endpoint |
 | `app/api/manifest/route.ts` | Machine-readable payment manifest (`/api/manifest`) |
 | `app/api/qr/route.ts` | Static downloadable QR PNG (`/api/qr`) |
+| `public/widget.js` | Floating-widget embed script (see the Studio's "Floating widget" tab) |
+| `app/lib/pages.ts`, `app/api/extension/*/route.ts` | URL registrations backing the browser extension — see `extension/README.md` |
+| `extension/` | The Propz browser extension — auto-shows a registered creator's tip button on any page, including platforms that block page customization entirely (GoFundMe et al.) |
+| `app/extension/privacy/page.tsx` | Hosted privacy policy for the browser extension (`/extension/privacy`) — required by the Chrome Web Store for its broad host permissions |
 | `public/propz-logo.png`, `propz-logo.svg`, `favicon.svg`, `og.png` | Brand assets — overwrite in place to rebrand |
 
 ## Framework version

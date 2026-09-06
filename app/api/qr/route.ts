@@ -1,5 +1,6 @@
 import QRCode from "qrcode";
-import { basePayUri, readConfig, solanaPayUrl, validEvmAddress, validSolanaAddress } from "../../lib/tip";
+import { basePayUri, solanaPayUrl, validEvmAddress, validSolanaAddress } from "../../lib/tip";
+import { resolveConfig } from "../../lib/handle-store";
 
 // A static, downloadable QR code for surfaces that can't run an iframe or JS:
 // pre-recorded video overlays, video descriptions, printed material, thumbnails.
@@ -9,7 +10,7 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const raw: Record<string, string> = {};
   url.searchParams.forEach((value, key) => { raw[key] = value; });
-  const config = readConfig(raw);
+  const config = await resolveConfig(raw);
 
   const amount = (raw.amount || "5").slice(0, 12);
   const numericAmount = Number(amount);

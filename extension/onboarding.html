@@ -1,0 +1,55 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Set up Propz</title>
+<link rel="stylesheet" href="shared.css">
+<style>body { width: 380px; padding: 22px; }</style>
+</head>
+<body>
+  <svg class="mark" viewBox="0 0 48 48" aria-hidden="true">
+    <path d="M9 40V9h16c9.1 0 15 5.3 15 13.5S34.1 36 25 36H18"/>
+    <path d="M15 31V16h10c4.5 0 7.5 2.5 7.5 6.5S29.5 29 25 29h-4"/>
+    <circle cx="40" cy="9" r="2.8"/><circle cx="9" cy="40" r="2.8"/><circle cx="21" cy="29" r="2.3"/>
+  </svg>
+
+  <div id="form-state" class="state active">
+    <h1>Set up your tip jar</h1>
+    <p class="sub">This is what shows up when you enable Propz on a page.</p>
+
+    <label for="name">Your name or business</label>
+    <input id="name" maxlength="48" placeholder="e.g. Jamie's Woodworking" type="text">
+
+    <label for="sol">Solana address <span style="font-weight:400;text-transform:none">(SOL &amp; USDC)</span></label>
+    <input id="sol" autocapitalize="off" autocorrect="off" placeholder="Public address only" spellcheck="false" type="text">
+    <p class="error-text" id="sol-err">Enter a valid Solana public address.</p>
+
+    <label for="base">Base address <span style="font-weight:400;text-transform:none">(USDC)</span></label>
+    <input id="base" autocapitalize="off" autocorrect="off" placeholder="0x... — public address only" spellcheck="false" type="text">
+    <p class="error-text" id="base-err">Enter a valid 0x public address.</p>
+
+    <p class="hint">Public receiving address only — never a seed phrase or private key. Propz never asks for one and can't hold funds either way.</p>
+
+    <button class="primary" id="save-btn" type="button">Save and continue</button>
+    <p class="error-text" id="form-err">Add at least one valid Solana or Base address.</p>
+
+    <p class="fee-line">0.08% platform fee on every tip, disclosed to supporters before they send — the rest goes straight to you.</p>
+  </div>
+
+  <div id="done-state" class="state">
+    <h1>You're set up</h1>
+    <p class="sub">Now go to any page you want your tip button on.</p>
+    <p class="hint" style="text-align:center">
+      Click the Propz icon in your toolbar, then "Show on this page." It'll appear there for every visitor —
+      not just you — including on pages you can't add a script to, like a GoFundMe campaign.
+    </p>
+    <button class="secondary" id="edit-btn" type="button">Edit profile</button>
+    <p class="note">You can change this anytime from the toolbar popup.<br>
+      <a href="https://propz.saylorinnovations.com/" target="_blank">Or build a full Propz card →</a> ·
+      <a href="https://propz.saylorinnovations.com/extension/privacy" target="_blank">Privacy</a></p>
+  </div>
+
+  <script src="validators.js"></script>
+  <script src="onboarding.js"></script>
+</body>
+</html>
