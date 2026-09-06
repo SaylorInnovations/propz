@@ -13,6 +13,22 @@ chrome.runtime.onInstalled.addListener((details) => {
   }
 });
 
+// Mirrors app/lib/pages.ts's normalizePageUrl (also duplicated in popup.js)
+// — used here purely as a local cache key, so a query-string or hash-only
+// change on an already-registered page doesn't tear down and rebuild the
+// widget for no reason.
+function normalizeUrl(raw) {
+  let u;
+  try {
+    u = new URL(raw);
+  } catch {
+    return null;
+  }
+  if (u.protocol !== "http:" && u.protocol !== "https:") return null;
+  const path = u.pathname.replace(/\/+$/, "") || "/";
+  return `${u.protocol}//${u.host.toLowerCase()}${path}`;
+}
+
 async function lookup(url) {
   try {
     const res = await fetch(`${API_ORIGIN}/api/extension/lookup?url=${encodeURIComponent(url)}`);
@@ -57,9 +73,30 @@ async function revert(url, editToken) {
 // DOM, fixed-position fab, toggling panel with an iframe pointing at
 // /embed) but re-declared standalone, since executeScript's `func` has to
 // be fully self-contained. Keep the two in sync by hand if either changes.
-function mountPropzWidget(config, apiOrigin) {
-  if (window.__propzWidgetMounted) return;
-  window.__propzWidgetMounted = true;
+//
+// Re-run on every navigation the background worker notices — including
+// same-document SPA navigation (see the webNavigation.onHistoryStateUpdated
+// listener below), which is how almost every social platform this is meant
+// to run on actually changes pages. `pageKey` is the normalized URL the
+// background worker last looked up; `config` is null when that URL isn't
+// registered. window.__propzWidgetState remembers what's currently mounted
+// so navigating between two pages inside the same SPA document tears down
+// the old page's widget and/or mounts the new one, instead of either
+// leaking a stale button onto an unrelated page or silently doing nothing.
+function syncPropzWidget(pageKey, config, apiOrigin) {
+  const state = window.__propzWidgetState;
+
+  if (!config) {
+    if (state) {
+      state.host.remove();
+      window.__propzWidgetState = null;
+    }
+    return;
+  }
+
+  if (state && state.pageKey === pageKey) return; // already showing the right thing
+
+  if (state) state.host.remove();
 
   const params = new URLSearchParams();
   if (config.sol) params.set("sol", config.sol);
@@ -140,33 +177,66 @@ function mountPropzWidget(config, apiOrigin) {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape" && open) setOpen(false);
   });
+
+  window.__propzWidgetState = { pageKey, host };
 }
 
 async function checkAndMount(tabId, url) {
+  const pageKey = normalizeUrl(url);
+  if (!pageKey) return;
   const result = await lookup(url);
-  if (!result || !result.registered) return;
-  try {
-    await chrome.scripting.executeScript({
-      target: { tabId },
-      world: "MAIN",
-      func: mountPropzWidget,
-      args: [
-        {
+  const config =
+    result && result.registered
+      ? {
           sol: result.sol,
           base: result.base,
           name: result.name,
           message: result.message,
           button: result.button,
           accent: result.accent,
-        },
-        API_ORIGIN,
-      ],
+        }
+      : null;
+  try {
+    await chrome.scripting.executeScript({
+      target: { tabId },
+      world: "MAIN",
+      func: syncPropzWidget,
+      args: [pageKey, config, API_ORIGIN],
     });
   } catch {
     // Page disallows script injection entirely (some browser-internal
     // pages do) — nothing to do about that, just skip it.
   }
 }
+
+// Content scripts only run once per real document load, which misses the
+// dominant navigation pattern on the platforms this extension targets:
+// Twitter/X, Instagram, YouTube, TikTok, Facebook and friends all route
+// internally via the History API, never firing a new document load when a
+// visitor moves from one profile/page to another. Without this, the widget
+// would only ever appear after a manual hard refresh of an exact registered
+// URL — not good enough for "overlay this on my social page." A short
+// per-tab debounce collapses the handful of history events a single visual
+// navigation can fire on some sites into one lookup.
+const navDebounce = new Map();
+function scheduleCheck(tabId, url) {
+  clearTimeout(navDebounce.get(tabId));
+  navDebounce.set(
+    tabId,
+    setTimeout(() => {
+      navDebounce.delete(tabId);
+      checkAndMount(tabId, url);
+    }, 150),
+  );
+}
+chrome.webNavigation.onHistoryStateUpdated.addListener((details) => {
+  if (details.frameId !== 0) return; // top frame only, same as content_scripts
+  scheduleCheck(details.tabId, details.url);
+});
+chrome.tabs.onRemoved.addListener((tabId) => {
+  clearTimeout(navDebounce.get(tabId));
+  navDebounce.delete(tabId);
+});
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === "propz:check") {
@@ -180,11 +250,17 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     return true;
   }
   if (message?.type === "propz:register") {
-    register(message.payload).then(sendResponse);
+    register(message.payload).then((res) => {
+      if (res.status < 300 && message.tabId != null) checkAndMount(message.tabId, message.payload?.url);
+      sendResponse(res);
+    });
     return true;
   }
   if (message?.type === "propz:revert") {
-    revert(message.url, message.editToken).then(sendResponse);
+    revert(message.url, message.editToken).then((res) => {
+      if (res.status < 300 && message.tabId != null) checkAndMount(message.tabId, message.url);
+      sendResponse(res);
+    });
     return true;
   }
   return false;

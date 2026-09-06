@@ -352,3 +352,14 @@ footer > span { margin-left: auto; }
   .qr-panel { grid-template-columns: 78px 1fr; }
   .qr-panel img { width: 78px; height: 78px; }
 }
+
+.policy-shell { width: min(720px, calc(100% - 40px)); margin: 0 auto; padding: 56px 0 90px; }
+.policy-shell h1 { font-size: clamp(28px, 4vw, 38px); letter-spacing: -.03em; margin: 0 0 8px; }
+.policy-updated { color: #6684a4; font-size: 11px; letter-spacing: .06em; text-transform: uppercase; margin: 0 0 34px; }
+.policy-shell h2 { font-size: 16px; color: var(--cyan); letter-spacing: -.01em; margin: 34px 0 12px; }
+.policy-shell p, .policy-shell li { color: var(--muted); line-height: 1.7; font-size: 14px; }
+.policy-shell ul { margin: 0 0 16px; padding-left: 20px; }
+.policy-shell li { margin-bottom: 8px; }
+.policy-shell li strong, .policy-shell p strong { color: #dceaff; font-weight: 600; }
+.policy-shell code { background: rgba(24,223,242,.08); border: 1px solid rgba(24,223,242,.18); border-radius: 5px; padding: 1px 6px; font: 12px var(--font-mono); color: #9beef7; }
+.policy-shell a { color: var(--cyan); text-decoration: underline; text-underline-offset: 2px; }

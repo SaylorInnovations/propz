@@ -21,13 +21,27 @@ against a real strict-CSP test page while building this).
    Cloudflare KV namespace — see `app/api/extension/register/route.ts` and
    `app/api/extension/lookup/route.ts`). From then on, **every visitor with
    the extension installed** sees your tip button there — not just you.
-4. `content.js` runs on every page, asks the background worker (`propz:check`)
-   whether the current URL is registered, and if so the background worker
-   injects the widget directly into the page's main world. The injected
-   widget is the same design as `public/widget.js` (Shadow DOM, floating
-   button, expanding panel with an iframe pointing at `/embed`) — just
-   re-declared standalone in `background.js`, since `executeScript`'s `func`
-   argument has to be fully self-contained and can't import anything.
+4. `content.js` runs on every real page load, asks the background worker
+   (`propz:check`) whether the current URL is registered, and if so the
+   background worker injects the widget directly into the page's main
+   world. The injected widget is the same design as `public/widget.js`
+   (Shadow DOM, floating button, expanding panel with an iframe pointing at
+   `/embed`) — just re-declared standalone in `background.js`, since
+   `executeScript`'s `func` argument has to be fully self-contained and
+   can't import anything.
+5. The background worker also watches `chrome.webNavigation.onHistoryStateUpdated`
+   — most of the platforms this is built for (X/Twitter, Instagram, YouTube,
+   TikTok, Facebook, etc.) route internally via the History API and never
+   fire a real page load when a visitor moves from one profile or post to
+   another. Without this, the button would only ever appear after a manual
+   hard refresh of an exact registered URL, which defeats the point on
+   sites like these. Each same-document navigation re-checks the new URL
+   and mounts, swaps, or tears down the widget accordingly, so it correctly
+   disappears when a visitor SPA-navigates away from a registered page and
+   appears when they land on one — all without a full reload.
+
+Registering or reverting a page from the toolbar popup also takes effect on
+that tab immediately, without needing a reload, for the same reason.
 
 No accounts anywhere in Propz, by design, so there's no login here either.
 The only thing standing between someone and re-registering or deleting a
@@ -61,7 +75,11 @@ one:
 2. Upload it at the [Chrome Web Store Developer
    Dashboard](https://chrome.google.com/webstore/devconsole).
 3. You'll need a short listing description, a few screenshots, and a
-   privacy-practices disclosure. Worth knowing going in: the
+   privacy policy URL — Chrome's submission form rejects broad-host-permission
+   extensions outright without one. Use
+   `https://propz.saylorinnovations.com/extension/privacy`
+   (`app/extension/privacy/page.tsx`) once it's deployed; keep it in sync by
+   hand if what the extension collects ever changes. Worth knowing going in: the
    `host_permissions` covering every http/https page (required for the
    automatic-detection behavior to work anywhere) puts this in Chrome's
    most-scrutinized review tier — expect the review to take longer and ask

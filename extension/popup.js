@@ -24,6 +24,7 @@
   document.getElementById("loading").style.display = "block";
 
   let currentUrl = "";
+  let currentTabId = null;
   let normalized = "";
   let profile = null;
 
@@ -35,6 +36,7 @@
 
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
     currentUrl = tabs[0]?.url || "";
+    currentTabId = tabs[0]?.id ?? null;
     normalized = normalizeUrl(currentUrl);
 
     if (!normalized) {
@@ -69,7 +71,7 @@
             show("registered-mine");
             document.getElementById("revert-btn").addEventListener("click", () => {
               document.getElementById("revert-btn").disabled = true;
-              chrome.runtime.sendMessage({ type: "propz:revert", url: currentUrl, editToken: ourToken }, (res) => {
+              chrome.runtime.sendMessage({ type: "propz:revert", url: currentUrl, editToken: ourToken, tabId: currentTabId }, (res) => {
                 if (res && res.status && res.status < 300) {
                   const next = { ...tokens };
                   delete next[normalized];
@@ -94,6 +96,7 @@
           chrome.runtime.sendMessage(
             {
               type: "propz:register",
+              tabId: currentTabId,
               payload: {
                 url: currentUrl,
                 name: profile.name,
