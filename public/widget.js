@@ -3,7 +3,10 @@
 // Propz has nowhere on a third-party host page to scroll to, clicking it
 // expands the actual tip card in place instead of navigating away.
 //
-// Drop this on any page, anywhere:
+// Drop this on any page, anywhere — either with a claimed handle:
+//   <script src="https://propz.saylorinnovations.com/widget.js"
+//     data-handle="dave" async></script>
+// or with the raw config, same as before handles existed:
 //   <script src="https://propz.saylorinnovations.com/widget.js"
 //     data-sol="..." data-base="..." data-name="..." async></script>
 //
@@ -21,9 +24,15 @@
   var data = script.dataset;
 
   var params = new URLSearchParams();
-  ["sol", "base", "name", "message", "button", "accent"].forEach(function (key) {
-    if (data[key]) params.set(key === "button" ? "button" : key, data[key]);
-  });
+  if (data.handle) {
+    // Resolved server-side from KV by /embed — nothing else here reveals a
+    // wallet address in the page's own source.
+    params.set("h", data.handle);
+  } else {
+    ["sol", "base", "name", "message", "accent"].forEach(function (key) {
+      if (data[key]) params.set(key, data[key]);
+    });
+  }
   var embedUrl = origin + "/embed?" + params.toString();
   var label = data.button || "Send Propz";
 

@@ -1,11 +1,12 @@
 import { FEE_BPS, PROPZ_FEE_BASE, PROPZ_FEE_SOLANA } from "../../lib/fee";
-import { BASE_USDC, readConfig, SOLANA_USDC, validEvmAddress, validSolanaAddress } from "../../lib/tip";
+import { BASE_USDC, SOLANA_USDC, validEvmAddress, validSolanaAddress } from "../../lib/tip";
+import { resolveConfig } from "../../lib/handle-store";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
   const raw: Record<string, string> = {};
   url.searchParams.forEach((value, key) => { raw[key] = value; });
-  const config = readConfig(raw);
+  const config = await resolveConfig(raw);
   const payments: Record<string, string | number>[] = [];
 
   if (validSolanaAddress(config.solana)) {

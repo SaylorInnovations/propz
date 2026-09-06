@@ -1,10 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Brand } from "./components/brand";
 import { BoltIcon, CheckIcon, CodeIcon, CopyIcon, ExternalIcon, QrIcon, WalletIcon, WidgetIcon } from "./components/icons";
 import { TipJar } from "./components/tipjar";
 import { FEE_PERCENT_LABEL } from "./lib/fee";
+import { normalizeHandle } from "./lib/handles";
 import {
   configParams,
   defaultConfig,
@@ -15,23 +16,71 @@ import {
 } from "./lib/tip";
 
 type OutputTab = "embed" | "widget" | "link" | "qr" | "agent";
+type HandleStatus = "idle" | "checking" | "available" | "taken" | "invalid";
+type Destination = "social" | "website";
 
 function escapeAttr(value: string) {
   return value.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+}
+
+function editTokenKey(handle: string) {
+  return `propz:editToken:${handle}`;
 }
 
 export default function Studio() {
   const [config, setConfig] = useState<TipConfig>(defaultConfig);
   const [tab, setTab] = useState<OutputTab>("embed");
   const [copied, setCopied] = useState("");
+  const [destination, setDestination] = useState<Destination>("social");
+
+  const [handleInput, setHandleInput] = useState("");
+  // Keyed by the handle it answers, not just a bare available/taken flag —
+  // so a stale result from whatever was typed a moment ago never gets
+  // rendered against the current input while the next debounced check is
+  // still in flight; render derives "checking" for that gap on its own.
+  const [checkResult, setCheckResult] = useState<{ handle: string; available: boolean } | null>(null);
+  const [claimedHandle, setClaimedHandle] = useState("");
+  const [publishing, setPublishing] = useState(false);
+  const [publishError, setPublishError] = useState("");
 
   const origin = typeof window === "undefined" ? "" : window.location.origin;
+  const normalizedHandle = normalizeHandle(handleInput) || "";
+
+  // Debounced availability check as the handle is typed. A handle that's
+  // "taken" but matches an editToken already sitting in this browser's
+  // localStorage is actually just this creator coming back to update their
+  // own card, so it reads as available-to-you rather than a conflict.
+  useEffect(() => {
+    if (!normalizedHandle) return;
+    const timer = window.setTimeout(async () => {
+      try {
+        const res = await fetch(`/api/handle/check?handle=${encodeURIComponent(normalizedHandle)}`);
+        const data = (await res.json()) as { available: boolean };
+        const mine = Boolean(localStorage.getItem(editTokenKey(normalizedHandle)));
+        setCheckResult({ handle: normalizedHandle, available: data.available || mine });
+      } catch {
+        // Leave whatever result is already there — a failed check just means
+        // the status hint keeps showing "checking" rather than lying either way.
+      }
+    }, 400);
+    return () => window.clearTimeout(timer);
+  }, [normalizedHandle]);
+
+  const handleStatus: HandleStatus = !handleInput.trim()
+    ? "idle"
+    : !normalizedHandle
+      ? "invalid"
+      : checkResult && checkResult.handle === normalizedHandle
+        ? checkResult.available
+          ? "available"
+          : "taken"
+        : "checking";
 
   const params = useMemo(() => configParams(config).toString(), [config]);
-  const jarUrl = `${origin}/jar?${params}`;
-  const embedUrl = `${origin}/embed?${params}`;
-  const manifestUrl = `${origin}/api/manifest?${params}`;
-  const qrUrl = `${origin}/api/qr?${params}`;
+  const jarUrl = claimedHandle ? `${origin}/@${claimedHandle}` : `${origin}/jar?${params}`;
+  const embedUrl = claimedHandle ? `${origin}/embed?h=${claimedHandle}` : `${origin}/embed?${params}`;
+  const manifestUrl = claimedHandle ? `${origin}/api/manifest?h=${claimedHandle}` : `${origin}/api/manifest?${params}`;
+  const qrUrl = claimedHandle ? `${origin}/api/qr?h=${claimedHandle}` : `${origin}/api/qr?${params}`;
   const embedCode = `<iframe src="${embedUrl}" title="Send Propz to ${config.name}" width="100%" height="430" style="border:0;max-width:440px" loading="lazy"></iframe>`;
   const widgetAttrs = useMemo(
     () =>
@@ -40,10 +89,17 @@ export default function Studio() {
         .join(" "),
     [config],
   );
-  const widgetCode = `<script src="${origin}/widget.js" ${widgetAttrs} async></script>`;
+  const widgetCode = claimedHandle
+    ? `<script src="${origin}/widget.js" data-handle="${claimedHandle}" async></script>`
+    : `<script src="${origin}/widget.js" ${widgetAttrs} async></script>`;
   const solValid = !config.solana || validSolanaAddress(config.solana);
   const baseValid = !config.base || validEvmAddress(config.base);
   const ready = Boolean(origin && (validSolanaAddress(config.solana) || validEvmAddress(config.base)));
+  const canClaim =
+    ready &&
+    Boolean(normalizedHandle) &&
+    (handleStatus === "available" || (handleStatus === "taken" && Boolean(claimedHandle))) &&
+    !publishing;
 
   function update<K extends keyof TipConfig>(key: K, value: TipConfig[K]) {
     setConfig((current) => ({ ...current, [key]: value }));
@@ -53,6 +109,40 @@ export default function Studio() {
     await navigator.clipboard.writeText(value);
     setCopied(label);
     window.setTimeout(() => setCopied(""), 1800);
+  }
+
+  async function claimHandle() {
+    if (!normalizedHandle || !ready) return;
+    setPublishing(true);
+    setPublishError("");
+    try {
+      const storedToken = localStorage.getItem(editTokenKey(normalizedHandle)) || undefined;
+      const res = await fetch("/api/handle/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          handle: normalizedHandle,
+          name: config.name,
+          message: config.message,
+          button: config.button,
+          sol: config.solana,
+          base: config.base,
+          accent: config.accent,
+          editToken: storedToken,
+        }),
+      });
+      const data = (await res.json()) as { ok?: boolean; editToken?: string; error?: string };
+      if (!res.ok || !data.ok || !data.editToken) {
+        setPublishError(data.error || "Could not claim that handle. Try again.");
+        return;
+      }
+      localStorage.setItem(editTokenKey(normalizedHandle), data.editToken);
+      setClaimedHandle(normalizedHandle);
+    } catch {
+      setPublishError("Connection error. Try again.");
+    } finally {
+      setPublishing(false);
+    }
   }
 
   const outputCode: Record<OutputTab, string> = {
@@ -156,6 +246,46 @@ export default function Studio() {
             <p className="eyebrow">02 · PUBLISH</p>
             <h2>Your Propz link, ready to ship.</h2>
             <p>Add at least one valid public wallet address, then copy the embed or hosted link.</p>
+
+            <div className="handle-claim">
+              <label>
+                Claim a short link
+                <div className={`handle-input-row ${handleStatus}`}>
+                  <span className="handle-at">propz.saylorinnovations.com/@</span>
+                  <input
+                    autoCapitalize="off"
+                    autoCorrect="off"
+                    disabled={!ready}
+                    maxLength={32}
+                    onChange={(event) => setHandleInput(event.target.value)}
+                    placeholder="yourname"
+                    spellCheck={false}
+                    value={handleInput}
+                  />
+                </div>
+              </label>
+              {handleInput && (
+                <p className={`handle-status ${handleStatus}`}>
+                  {handleStatus === "checking" && "Checking…"}
+                  {handleStatus === "available" && <><CheckIcon /> Available</>}
+                  {handleStatus === "taken" && "Already taken — try another"}
+                  {handleStatus === "invalid" && "2–32 letters, numbers, _ or -"}
+                </p>
+              )}
+              <button className="claim-btn" disabled={!canClaim} onClick={claimHandle} type="button">
+                {publishing ? "Claiming…" : claimedHandle ? "Update my Propz link" : "Claim it"}
+              </button>
+              {publishError && <p className="handle-error">{publishError}</p>}
+              {claimedHandle && (
+                <p className="handle-claimed">
+                  <CheckIcon /> Live — every tab below now points at <code>/@{claimedHandle}</code> instead of your raw wallet address.
+                </p>
+              )}
+              <p className="handle-hint">
+                Optional — everything below already works without one. A handle just replaces the long,
+                technical-looking link with something worth pasting into a bio.
+              </p>
+            </div>
           </div>
           <div className="output-box">
             <div className="output-tabs" role="tablist" aria-label="Publish options">
@@ -195,6 +325,28 @@ export default function Studio() {
               <span><CheckIcon /> No signup required</span>
               <span>{FEE_PERCENT_LABEL} platform fee — keeps Propz running</span>
               <a className={!ready ? "disabled" : ""} href={ready ? jarUrl : undefined} rel="noreferrer" target="_blank">Open full page <ExternalIcon /></a>
+            </div>
+
+            <div className="destinations">
+              <div className="destinations-tabs" role="tablist" aria-label="Where are you adding this?">
+                <button className={destination === "social" ? "active" : ""} onClick={() => setDestination("social")} type="button">Linktree &amp; bio links</button>
+                <button className={destination === "website" ? "active" : ""} onClick={() => setDestination("website")} type="button">Your own website</button>
+              </div>
+              {destination === "social" ? (
+                <ol className="destinations-body">
+                  <li>Copy the <b>Hosted link</b> tab above{claimedHandle ? "" : " — claim a handle first so it's short enough to trust"}.</li>
+                  <li>Linktree: tap <b>Add Link</b>, paste it, and title it something like &quot;Tip me&quot; or &quot;Buy me a coffee&quot;.</li>
+                  <li>Instagram, TikTok, X, YouTube: paste the same link as your profile/bio link, or drop it in a video description.</li>
+                </ol>
+              ) : (
+                <div className="destinations-body dest-platforms">
+                  <div><strong>Plain HTML</strong><p>Paste the <b>Floating widget</b> script right before <code>{"</body>"}</code>.</p></div>
+                  <div><strong>WordPress</strong><p>Add a <b>Custom HTML</b> block and paste the same script.</p></div>
+                  <div><strong>Wix</strong><p>Add an <b>Embed → Custom Code</b> element, set it to load on all pages.</p></div>
+                  <div><strong>Squarespace</strong><p>Settings → Advanced → Code Injection (Footer) runs it site-wide.</p></div>
+                  <div><strong>Carrd</strong><p>Add an <b>Embed</b> element, choose &quot;Code&quot;, paste it in.</p></div>
+                </div>
+              )}
             </div>
           </div>
         </section>
