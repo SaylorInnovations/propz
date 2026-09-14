@@ -30,7 +30,7 @@ test("renders the Propz creator studio and social metadata", async () => {
 
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-  assert.match(html, /<title>Propz — Give credit\. Send value\.<\/title>/);
+  assert.match(html, /<title>Propz — Give credit where credit is due\.<\/title>/);
   assert.match(html, /Your content\./);
   assert.match(html, /Choose where your tip jar goes\./);
   assert.match(html, /https:\/\/propz\.saylorinnovations\.com\/og\.png/);
@@ -55,8 +55,9 @@ test("returns a machine-readable multi-chain payment manifest", async () => {
   assert.equal(manifest.protocol, "propz/1");
   assert.equal(manifest.recipient, "Saylor Innovations");
   assert.equal(manifest.noncustodial, true);
-  assert.equal(manifest.platformFeeBps, 8);
+  assert.equal(manifest.platformFeeBps, 100);
   assert.equal(manifest.payments.length, 3);
+  assert.ok(manifest.payments.every((payment) => payment.feeBps === 100));
   assert.deepEqual(
     manifest.payments.map((payment) => payment.network),
     ["solana:mainnet", "solana:mainnet", "eip155:8453"],
