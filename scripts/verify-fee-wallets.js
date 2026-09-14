@@ -18,14 +18,14 @@ const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const FEE_FILE = path.join(__dirname, "..", "app", "lib", "fee.ts");
 const EXPECTED_SOLANA = "341CaU9NT2PJftYakDsrchSK3PatVuo4yvzDA7zQbh65";
 const EXPECTED_BASE = "0x66d24018F3c8e5e5C4E703C8e378D3E7Df3D9C74";
-const EXPECTED_BPS_LITERAL = "BigInt(8)";
+const EXPECTED_BPS_LITERAL = "BigInt(100)";
 
 const src = fs.readFileSync(FEE_FILE, "utf8");
 
 const checks = [
   [src.includes(`"${EXPECTED_SOLANA}"`), `PROPZ_FEE_SOLANA must be exactly "${EXPECTED_SOLANA}"`],
   [src.includes(`"${EXPECTED_BASE}"`), `PROPZ_FEE_BASE must be exactly "${EXPECTED_BASE}"`],
-  [src.includes(EXPECTED_BPS_LITERAL), `FEE_BPS must be exactly ${EXPECTED_BPS_LITERAL} (0.08%)`],
+  [src.includes(EXPECTED_BPS_LITERAL), `FEE_BPS must be exactly ${EXPECTED_BPS_LITERAL} (1%)`],
 ];
 
 const failed = checks.filter(([ok]) => !ok);
@@ -42,6 +42,6 @@ if (failed.length) {
 }
 
 console.log(
-  `  fee wallets: verified intact (0.08% -> sol:${EXPECTED_SOLANA.slice(0, 8)}... ` +
+  `  fee wallets: verified intact (1% -> sol:${EXPECTED_SOLANA.slice(0, 8)}... ` +
   `base:${EXPECTED_BASE.slice(0, 8)}...)`,
 );

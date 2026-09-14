@@ -19,7 +19,7 @@ Customize your display name, message, button label, and accent color. Save your 
 
 You must paste the generated code into a website you can edit and publish that website. Installing the extension does not automatically change your site. Visitors do not need the extension. Some platforms restrict scripts or iframes; use the shareable link on those platforms.
 
-Supporters can send SOL or USDC on supported networks through the hosted Propz payment page. Payments require approval in a compatible wallet, and Base payments may require two approvals. Propz never asks for private keys or seed phrases and never takes custody of funds. Payments include a disclosed 0.08% platform fee.
+Supporters can send SOL or USDC on supported networks through the hosted Propz payment page. Payments require approval in a compatible wallet, and Base payments may require two approvals. Propz never asks for private keys or seed phrases and never takes custody of funds. Payments include a disclosed 1% platform fee.
 
 No Propz account required. Built by Saylor Innovations.
 
