@@ -84,6 +84,19 @@ Windows, macOS, and Linux too, but through two different paths:
   On Windows, run these from PowerShell, cmd.exe, WSL, or Git Bash — all
   work, since nothing left in this path shells out to `bash`.
 
+## Add Propz to your website or content
+
+Open the Studio, enter your own public receiving wallet, and customize your
+jar. Choose **Floating widget** for a site-wide tip button (paste into your
+site's custom code/footer before `</body>`), **Embed** for a card inside a
+page, or **Hosted link** for bios, posts, and video descriptions. Publish
+your website after adding the snippet. Platforms that block scripts or
+iframes can use the hosted link instead. Visitors need no extension.
+
+The [Chrome extension](extension/README.md) provides the same widget, card,
+and link generation from the browser toolbar. It does not automatically
+modify websites. Changed settings must be copied and published again.
+
 ## Quick start
 
 Requires Node.js `>=22.13.0`.

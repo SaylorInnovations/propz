@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="440" height="280" viewBox="0 0 440 280">
+  <rect width="440" height="280" fill="#010718"/>
+  <circle cx="440" cy="0" r="190" fill="#061b32"/>
+  <circle cx="440" cy="0" r="140" fill="none" stroke="#0b4054"/>
+  <g transform="translate(27 26) scale(.72)" fill="none" stroke="#18dff2" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M9 40V9h16c9.1 0 15 5.3 15 13.5S34.1 36 25 36H18"/>
+    <path d="M15 31V16h10c4.5 0 7.5 2.5 7.5 6.5S29.5 29 25 29h-4"/>
+  </g>
+  <g font-family="Arial, sans-serif">
+    <text x="70" y="51" fill="#f7fbff" font-size="21" font-weight="bold" letter-spacing="3">PROP<tspan fill="#18dff2">Z</tspan></text>
+    <text x="30" y="119" fill="#f7fbff" font-size="37" font-weight="bold">Your content.</text>
+    <text x="30" y="161" fill="#18dff2" font-size="37" font-weight="bold">Your tip jar.</text>
+    <text x="30" y="199" fill="#b0c4d8" font-size="15">Website buttons, embeds, and links.</text>
+    <rect x="30" y="221" width="195" height="33" rx="16.5" fill="#18dff2"/>
+    <text x="48" y="242" fill="#061113" font-size="13" font-weight="bold">Build your tip jar with Propz</text>
+  </g>
+</svg>

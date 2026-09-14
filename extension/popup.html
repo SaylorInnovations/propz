@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<title>Propz</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+  <header class="head">
+    <span class="mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" role="img">
+        <path d="M9 40V9h16c9.1 0 15 5.3 15 13.5S34.1 36 25 36H18" />
+        <path d="M15 31V16h10c4.5 0 7.5 2.5 7.5 6.5S29.5 29 25 29h-4" />
+        <circle cx="40" cy="9" r="2.7" />
+        <circle cx="9" cy="40" r="2.7" />
+        <circle class="inner-node" cx="21" cy="29" r="2.2" />
+      </svg>
+    </span>
+    <span class="wordmark">PROP<span>Z</span></span>
+  </header>
+
+  <h1>Add a tip jar to your website or content</h1>
+  <p class="intro">Enter your public wallet, customize your jar, then copy the code or link. Your visitors do not need this extension.</p>
+  <form id="form">
+    <div class="field">
+      <label for="sol">Solana address</label>
+      <input type="text" id="sol" placeholder="Your Solana public key" autocomplete="off" spellcheck="false" />
+    </div>
+    <div class="field">
+      <label for="base">Base address</label>
+      <input type="text" id="base" placeholder="0x… your Base public address" autocomplete="off" spellcheck="false" />
+    </div>
+    <details>
+      <summary>Customize your tip jar</summary>
+    <div class="field">
+      <label for="name">Display name</label>
+      <input type="text" id="name" placeholder="How you want to be shown" maxlength="48" />
+    </div>
+    <div class="field">
+      <label for="message">Message</label>
+      <input type="text" id="message" placeholder="A line under your name" maxlength="180" />
+    </div>
+    <div class="field">
+      <label for="button">Button label</label>
+      <input type="text" id="button" placeholder="Send Propz" maxlength="28" />
+    </div>
+    <div class="field">
+      <span class="field-label">Accent</span>
+      <div class="swatches" id="swatches">
+        <button type="button" class="swatch cyan" data-accent="cyan" aria-label="Cyan"></button>
+        <button type="button" class="swatch green" data-accent="green" aria-label="Green"></button>
+        <button type="button" class="swatch amber" data-accent="amber" aria-label="Amber"></button>
+        <button type="button" class="swatch violet" data-accent="violet" aria-label="Violet"></button>
+      </div>
+    </div>
+
+    </details>
+    <p class="hint" id="hint" role="status" aria-live="polite"></p>
+
+    <button type="submit" class="save">Save settings</button>
+  </form>
+
+  <section class="publish" aria-labelledby="publish-title">
+    <h2 id="publish-title">Publish your tip jar</h2>
+    <label for="format">Where will you use it?</label>
+    <select id="format">
+      <option value="widget">Website: floating button</option>
+      <option value="embed">Website: embedded card</option>
+      <option value="link">Content, bio, or video: shareable link</option>
+    </select>
+    <p id="instructions" class="intro"></p>
+    <label for="output">Your code or link</label>
+    <textarea id="output" readonly rows="4" placeholder="Add a valid receiving wallet to generate your code."></textarea>
+    <button type="button" id="copy" class="save" disabled>Copy code</button>
+    <a id="preview" target="_blank" rel="noreferrer" hidden>Preview your tip jar ↗</a>
+    <p class="intro">Tips go to your wallet. Payments require a compatible wallet and include a disclosed 0.08% platform fee.</p>
+  </section>
+  <footer class="foot">
+    <a href="https://propz.saylorinnovations.com/" target="_blank" rel="noreferrer">Build or edit your card in the Propz Studio ↗</a>
+  </footer>
+
+  <script type="module" src="popup.js"></script>
+</body>
+</html>

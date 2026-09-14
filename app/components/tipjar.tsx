@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import QRCode from "qrcode";
+import { useBrowserUrl } from "../lib/browser-url";
 import {
   BASE_USDC,
   basePayUri,
@@ -70,9 +71,9 @@ export function TipJar({
     setTransaction("");
   }
 
-  const pageUrl = typeof window === "undefined" ? "" : window.location.href;
-  const pageOrigin = typeof window === "undefined" ? "" : window.location.origin;
-  const appName = typeof navigator === "undefined" ? "" : inAppBrowserName(navigator.userAgent);
+  const pageUrl = useBrowserUrl();
+  const pageOrigin = pageUrl ? new URL(pageUrl).origin : "";
+  const appName = pageUrl ? inAppBrowserName(navigator.userAgent) : "";
 
   const finalAmount = custom || amount;
   const numericAmount = Number(finalAmount);
