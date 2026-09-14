@@ -3,19 +3,19 @@ import "./globals.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://propz.saylorinnovations.com"),
-  title: "Propz — Give credit. Send value.",
+  title: "Propz — Give credit where credit is due.",
   description:
     "Add a crypto tip jar to your website or content. Create a floating button, embedded card, or shareable link to receive SOL and USDC directly.",
   openGraph: {
-    title: "Propz — Give credit. Send value.",
+    title: "Propz — Give credit where credit is due.",
     description:
       "Your content. Your tip jar. Add a floating button, embed a card, or share a link to receive SOL and USDC.",
     type: "website",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Propz — Give credit. Send value." }],
+    images: [{ url: "/og.png", width: 1200, height: 630, alt: "Propz — Give credit where credit is due." }],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Propz — Give credit. Send value.",
+    title: "Propz — Give credit where credit is due.",
     description:
       "Your content. Your tip jar. Add a floating button, embed a card, or share a link to receive SOL and USDC.",
     images: ["/og.png"],

@@ -30,7 +30,7 @@ test("renders the Propz creator studio and social metadata", async () => {
 
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-  assert.match(html, /<title>Propz — Give credit\. Send value\.<\/title>/);
+  assert.match(html, /<title>Propz — Give credit where credit is due\.<\/title>/);
   assert.match(html, /Your content\./);
   assert.match(html, /Choose where your tip jar goes\./);
   assert.match(html, /https:\/\/propz\.saylorinnovations\.com\/og\.png/);
