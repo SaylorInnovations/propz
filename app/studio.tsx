@@ -85,7 +85,7 @@ export default function Studio() {
         <div className="studio-intro">
           <div>
             <p className="kicker"><span /> TIP PEOPLE, NOT PLATFORMS</p>
-            <h1>Your content.<br /><em>Your tip jar.</em></h1>
+            <h1>Give credit<br /><em>where credit is due.</em></h1>
           </div>
           <div className="intro-copy">
             <p><strong>Add a tip jar to your website or content.</strong> Create a floating tip button, embed a card, or share a link in your bio, videos, and posts. Visitors can send SOL or USDC directly to your wallet without installing anything. No signup required. Propz charges a disclosed {FEE_PERCENT_LABEL} platform fee.</p>
