@@ -10,7 +10,7 @@ import {
   createTransferCheckedInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
-import { PROPZ_FEE_SOLANA, splitUnits } from "../../../lib/fee";
+import { FEE_PERCENT_LABEL, PROPZ_FEE_SOLANA, splitUnits } from "../../../lib/fee";
 import { SOLANA_USDC, validSolanaAddress } from "../../../lib/tip";
 
 // A Solana Pay "transaction request" endpoint (SIMD-approved spec wallets
@@ -18,7 +18,7 @@ import { SOLANA_USDC, validSolanaAddress } from "../../../lib/tip";
 // POST takes the payer's pubkey and returns an unsigned transaction for
 // them to sign. Propz never holds a private key here and never touches the
 // funds — it only writes down, inside the transaction the supporter signs,
-// that most of it goes to the creator and a disclosed 0.08% goes to the
+// that most of it goes to the creator and a disclosed 1% goes to the
 // Propz fee wallet.
 
 const CORS_HEADERS = {
@@ -127,7 +127,7 @@ export async function POST(request: Request) {
       transaction: serialized.toString("base64"),
       message:
         feeUnits > BigInt(0)
-          ? `Propz for ${label} — includes a 0.08% Propz platform fee`
+          ? `Propz for ${label} — includes a ${FEE_PERCENT_LABEL} Propz platform fee`
           : `Propz for ${label}`,
     });
   } catch (error) {

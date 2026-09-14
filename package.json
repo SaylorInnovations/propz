@@ -1,7 +1,7 @@
 {
   "name": "propz",
   "version": "0.1.0",
-  "description": "Non-custodial crypto tip jar \u2014 embed it anywhere, supporters pay creators directly on Solana or Base with a disclosed 0.08% platform fee.",
+  "description": "Non-custodial crypto tip jar \u2014 embed it anywhere, supporters pay creators directly on Solana or Base with a disclosed 1% platform fee.",
   "license": "MIT",
   "private": true,
   "engines": {
