@@ -43,3 +43,6 @@ next-env.d.ts
 /.sites-runtime/
 /outputs/
 /work/
+
+# packaged extension zip (rebuild from extension/ when needed)
+/propz-extension.zip

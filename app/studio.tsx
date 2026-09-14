@@ -5,6 +5,7 @@ import { Brand } from "./components/brand";
 import { BoltIcon, CheckIcon, CodeIcon, CopyIcon, ExternalIcon, QrIcon, WalletIcon, WidgetIcon } from "./components/icons";
 import { TipJar } from "./components/tipjar";
 import { FEE_PERCENT_LABEL } from "./lib/fee";
+import { useBrowserUrl } from "./lib/browser-url";
 import {
   configParams,
   defaultConfig,
@@ -22,17 +23,18 @@ function escapeAttr(value: string) {
 
 export default function Studio() {
   const [config, setConfig] = useState<TipConfig>(defaultConfig);
-  const [tab, setTab] = useState<OutputTab>("embed");
+  const [tab, setTab] = useState<OutputTab>("widget");
   const [copied, setCopied] = useState("");
 
-  const origin = typeof window === "undefined" ? "" : window.location.origin;
+  const pageUrl = useBrowserUrl();
+  const origin = pageUrl ? new URL(pageUrl).origin : "";
 
   const params = useMemo(() => configParams(config).toString(), [config]);
   const jarUrl = `${origin}/jar?${params}`;
   const embedUrl = `${origin}/embed?${params}`;
   const manifestUrl = `${origin}/api/manifest?${params}`;
   const qrUrl = `${origin}/api/qr?${params}`;
-  const embedCode = `<iframe src="${embedUrl}" title="Send Propz to ${config.name}" width="100%" height="430" style="border:0;max-width:440px" loading="lazy"></iframe>`;
+  const embedCode = `<iframe src="${escapeAttr(embedUrl)}" title="${escapeAttr(`Send Propz to ${config.name}`)}" width="100%" height="520" style="border:0;max-width:440px" loading="lazy"></iframe>`;
   const widgetAttrs = useMemo(
     () =>
       Array.from(configParams(config).entries())
@@ -43,15 +45,19 @@ export default function Studio() {
   const widgetCode = `<script src="${origin}/widget.js" ${widgetAttrs} async></script>`;
   const solValid = !config.solana || validSolanaAddress(config.solana);
   const baseValid = !config.base || validEvmAddress(config.base);
-  const ready = Boolean(origin && (validSolanaAddress(config.solana) || validEvmAddress(config.base)));
+  const ready = Boolean(origin && solValid && baseValid && (validSolanaAddress(config.solana) || validEvmAddress(config.base)));
 
   function update<K extends keyof TipConfig>(key: K, value: TipConfig[K]) {
     setConfig((current) => ({ ...current, [key]: value }));
   }
 
   async function copy(value: string, label: string) {
-    await navigator.clipboard.writeText(value);
-    setCopied(label);
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopied(label);
+    } catch {
+      setCopied("error");
+    }
     window.setTimeout(() => setCopied(""), 1800);
   }
 
@@ -79,10 +85,10 @@ export default function Studio() {
         <div className="studio-intro">
           <div>
             <p className="kicker"><span /> TIP PEOPLE, NOT PLATFORMS</p>
-            <h1>Give credit.<br /><em>Send value.</em></h1>
+            <h1>Your content.<br /><em>Your tip jar.</em></h1>
           </div>
           <div className="intro-copy">
-            <p><strong>Propz is a simple way to tip your favorite creators, gamers, builders, streamers, artists—or anyone doing work you value.</strong> Send SOL or USDC directly to their wallet with no payout delay. Propz keeps a flat {FEE_PERCENT_LABEL} to keep the platform running — the rest goes straight to them.</p>
+            <p><strong>Add a tip jar to your website or content.</strong> Create a floating tip button, embed a card, or share a link in your bio, videos, and posts. Visitors can send SOL or USDC directly to your wallet without installing anything. No signup required. Propz charges a disclosed {FEE_PERCENT_LABEL} platform fee.</p>
             <div className="audience-list" aria-label="Who Propz is for">
               <span>CREATORS</span><span>GAMERS</span><span>BUILDERS</span><span>STREAMERS</span><span>ANYONE</span>
             </div>
@@ -154,11 +160,11 @@ export default function Studio() {
         <section className={`output-panel ${ready ? "ready" : ""}`}>
           <div className="output-copy">
             <p className="eyebrow">02 · PUBLISH</p>
-            <h2>Your Propz link, ready to ship.</h2>
-            <p>Add at least one valid public wallet address, then copy the embed or hosted link.</p>
+            <h2>Choose where your tip jar goes.</h2>
+            <p>Add your public receiving wallet, customize your jar, then copy the code or link for your platform.</p>
           </div>
           <div className="output-box">
-            <div className="output-tabs" role="tablist" aria-label="Publish options">
+            <div className="output-tabs" role="group" aria-label="Publish options">
               <button className={tab === "embed" ? "active" : ""} onClick={() => setTab("embed")} type="button"><CodeIcon /> Embed</button>
               <button className={tab === "widget" ? "active" : ""} onClick={() => setTab("widget")} type="button"><WidgetIcon /> Floating widget</button>
               <button className={tab === "link" ? "active" : ""} onClick={() => setTab("link")} type="button"><ExternalIcon /> Hosted link</button>
@@ -180,12 +186,14 @@ export default function Studio() {
             </div>
             {ready && tab === "widget" && (
               <p className="widget-note">
-                Drop this one <code>{"<script>"}</code> tag anywhere on your page — a floating button that stays fixed
-                in the corner as visitors scroll, the same way saylorinnovations.com&apos;s own floating
-                &quot;Free Consultation&quot; button does. Unlike that one, clicking it doesn&apos;t navigate away — it
-                opens the tip card right there, in place.
+                Paste this code into your website&apos;s custom code or footer before <code>{"</body>"}</code>,
+                then publish your site. Every visitor can use the floating tip button without an extension.
+                Your website platform must allow custom scripts; otherwise use the hosted link.
               </p>
             )}
+            {ready && tab === "embed" && <p className="widget-note">Paste into a Custom HTML or Embed block, then publish your page. Your platform must allow iframes. Visitors see the tip card where you place it.</p>}
+            {ready && tab === "link" && <p className="widget-note">Paste in your bio, video description, newsletter, or post. Use this option on platforms that do not allow custom scripts or iframes.</p>}
+            {copied === "error" && <p role="alert">Clipboard access was blocked. Select the code above and copy it manually.</p>}
             {ready && tab === "qr" && (
               <a className="qr-download" href={qrUrl} download={`propz-${config.name.replace(/[^a-z0-9]+/gi, "-").toLowerCase() || "qr"}.png`}>
                 <ExternalIcon /> Download PNG
@@ -207,9 +215,9 @@ export default function Studio() {
           <p>Whether they create, play, teach, stream, design, code, or build, Propz gives you a direct way to support their work.</p>
         </div>
         <div className="steps">
-          <article><span>01</span><WalletIcon /><h3>Creators add a wallet</h3><p>They publish a Solana, Base, or multi-chain Propz link. Private keys never enter the product.</p></article>
-          <article><span>02</span><CodeIcon /><h3>Supporters choose a tip</h3><p>Pick SOL or USDC, choose an amount, and review the request in your own wallet.</p></article>
-          <article><span>03</span><BoltIcon /><h3>Value moves directly</h3><p>The tip settles straight to the recipient, minus Propz&apos;s disclosed {FEE_PERCENT_LABEL} fee. Propz never holds the funds — every wallet touched is written into the transaction the supporter signs.</p></article>
+          <article><span>01</span><WalletIcon /><h3>Creators add a wallet</h3><p>Enter a public Solana or Base address and customize your jar. Private keys never enter the product.</p></article>
+          <article><span>02</span><CodeIcon /><h3>Publish on your website or content</h3><p>Copy a floating button or embedded card to your website, or share your jar link in a bio, video, or post.</p></article>
+          <article><span>03</span><BoltIcon /><h3>Value moves directly</h3><p>Visitors choose a tip and approve it in their wallet. The tip settles straight to the recipient, minus Propz&apos;s disclosed {FEE_PERCENT_LABEL} fee. Propz never holds the funds — every wallet touched is written into the transaction the supporter signs.</p></article>
         </div>
       </section>
 
