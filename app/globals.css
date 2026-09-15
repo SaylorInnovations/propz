@@ -290,6 +290,9 @@ label textarea + small { position: absolute; right: 11px; bottom: 9px; color: #5
 .final-cta svg { width: 16px; }
 footer { width: min(1180px, calc(100% - 48px)); margin: 0 auto; padding: 0 0 50px; display: flex; align-items: center; gap: 30px; color: #617d9a; font-size: 10px; }
 footer > span { margin-left: auto; }
+.footer-links { display: flex; gap: 18px; }
+.footer-links a { color: #617d9a; text-decoration: none; }
+.footer-links a:hover { color: var(--foreground); }
 
 .jar-page { min-height: 100vh; display: flex; flex-direction: column; background: radial-gradient(circle at 50% 40%, rgba(0,119,204,.15), transparent 35%); }
 .jar-header { width: min(1100px, calc(100% - 40px)); height: 76px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); }

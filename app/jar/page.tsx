@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Brand } from "../components/brand";
 import { TipJar } from "../components/tipjar";
 import { FEE_PERCENT_LABEL } from "../lib/fee";
@@ -21,7 +22,9 @@ export default async function JarPage({
           <span><i /> {FEE_PERCENT_LABEL} platform fee</span>
         </div>
       </div>
-      <footer className="jar-footer">Propz is a Saylor Innovations product</footer>
+      <footer className="jar-footer">
+        Propz is a Saylor Innovations product · <Link href="/terms">Terms</Link> · <Link href="/support">Support</Link>
+      </footer>
     </main>
   );
 }
