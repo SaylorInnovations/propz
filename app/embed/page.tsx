@@ -1,5 +1,12 @@
+import type { Metadata } from "next";
 import { TipJar } from "../components/tipjar";
 import { readConfig } from "../lib/tip";
+
+// Meant to live inside someone else's <iframe>, not to rank on its own —
+// see app/jar/page.tsx for the same reasoning.
+export const metadata: Metadata = {
+  robots: { index: false, follow: true },
+};
 
 export default async function EmbedPage({
   searchParams,

@@ -69,7 +69,7 @@ export function shortAddress(value: string) {
 // Points at our own Solana Pay "transaction request" endpoint instead of a
 // plain recipient+amount link. A static link can only ever describe one
 // recipient, and every Propz payment now settles to two (the creator, plus
-// the disclosed 0.08% Propz fee) — so wallets fetch this URL, POST their
+// the disclosed 1% Propz fee) — so wallets fetch this URL, POST their
 // public key, and get back an unsigned transaction that carries both
 // transfers for them to sign. `origin` must be an absolute origin (e.g.
 // `https://propz.example`); pass "" only when no origin is known yet, which

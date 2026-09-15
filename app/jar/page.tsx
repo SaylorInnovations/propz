@@ -1,7 +1,16 @@
+import type { Metadata } from "next";
 import { Brand } from "../components/brand";
 import { TipJar } from "../components/tipjar";
 import { FEE_PERCENT_LABEL } from "../lib/fee";
 import { readConfig } from "../lib/tip";
+
+// Each /jar URL is a one-off card for a single creator's wallet, not
+// canonical content of its own — keep these out of search results so they
+// don't dilute the site with near-duplicate pages. Still fully reachable by
+// anyone with the link, and by agents fetching /api/manifest directly.
+export const metadata: Metadata = {
+  robots: { index: false, follow: true },
+};
 
 export default async function JarPage({
   searchParams,

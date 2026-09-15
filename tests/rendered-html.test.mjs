@@ -55,7 +55,7 @@ test("returns a machine-readable multi-chain payment manifest", async () => {
   assert.equal(manifest.protocol, "propz/1");
   assert.equal(manifest.recipient, "Saylor Innovations");
   assert.equal(manifest.noncustodial, true);
-  assert.equal(manifest.platformFeeBps, 8);
+  assert.equal(manifest.platformFeeBps, 100);
   assert.equal(manifest.payments.length, 3);
   assert.deepEqual(
     manifest.payments.map((payment) => payment.network),

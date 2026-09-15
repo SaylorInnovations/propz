@@ -1,0 +1,34 @@
+# Propz — by Saylor Innovations
+
+> Propz is a non-custodial crypto tip jar. Creators, streamers, builders, gamers, and causes publish a Propz card once — a floating website button, an embedded card, or a shareable link — and supporters send SOL or USDC directly to their wallet on Solana or Base. Propz never holds funds; every payment settles wallet-to-wallet with a disclosed 1% platform fee.
+
+Site: https://propz.saylorinnovations.com/
+Parent: https://saylorinnovations.com/
+Contact: saylorinnovations@gmail.com
+Chains: Solana (SOL, USDC), Base (USDC)
+
+## How it works
+
+1. Build a card at the Studio (https://propz.saylorinnovations.com/) — add a display name, a support message, and at least one public receiving address. Private keys are never entered.
+2. Publish it as a floating website widget, an embedded iframe card, a hosted link, or a downloadable QR code.
+3. Supporters pick an amount, approve one transaction in their own wallet, and the funds move straight from supporter to recipient. Propz's 1% fee is written into and disclosed inside that same transaction — never a separate charge, never custody.
+
+## For AI Agents
+
+Every Propz card exposes a machine-readable payment manifest — no HTML scraping required:
+
+- [Manifest endpoint](https://propz.saylorinnovations.com/api/manifest): GET with `name`, `sol` and/or `base` query params (matching the card owner's wallets) returns deterministic JSON — supported networks, asset contracts, decimals, the disclosed `platformFeeBps`, and ready-to-use payment URI templates for Solana Pay and Base/EIP-681.
+- Solana payments resolve through a Solana Pay "transaction request" endpoint (https://propz.saylorinnovations.com/api/pay/solana) that returns an unsigned transaction for the agent's wallet to sign.
+- No signup, no API key, no account — point at any creator's wallet address and the manifest is generated on the fly.
+
+## Chrome extension
+
+The Propz Tip Button extension (https://propz.saylorinnovations.com/extension-privacy for the privacy policy) generates the same widget, embed, and link code from the browser toolbar, for creators who'd rather not open the Studio each time.
+
+## The rest of the network
+
+- https://saylorinnovations.com/ — websites, automation and small-business services (parent site)
+- https://propz.saylorinnovations.com/ — non-custodial crypto tip jar (this site)
+- https://recycle.saylorinnovations.com/ — electronics recycling and secure data destruction
+- https://crypto.saylorinnovations.com/ — Watchdog token scanner and the agent data API
+- Contact: saylorinnovations@gmail.com
