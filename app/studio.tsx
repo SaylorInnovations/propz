@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { Brand } from "./components/brand";
 import { BoltIcon, CheckIcon, CodeIcon, CopyIcon, ExternalIcon, QrIcon, WalletIcon, WidgetIcon } from "./components/icons";
 import { TipJar } from "./components/tipjar";
@@ -264,6 +265,10 @@ export default function Studio() {
       <footer>
         <Brand />
         <p>A Saylor Innovations product.</p>
+        <nav className="footer-links">
+          <Link href="/terms">Terms</Link>
+          <Link href="/support">Support</Link>
+        </nav>
         <span>Never share your private keys.</span>
       </footer>
     </main>
