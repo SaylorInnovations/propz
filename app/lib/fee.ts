@@ -4,8 +4,8 @@
 // than the number shown on the button. The creator gets the rest, and the
 // split happens inside the same wallet-signed transfer(s) the supporter
 // authorizes, so Propz's own code never holds or custodies the funds.
-export const FEE_BPS = BigInt(8); // 0.08% = 8 basis points (1 basis point = 0.01%)
-export const FEE_PERCENT_LABEL = "0.08%";
+export const FEE_BPS = BigInt(100); // 1% = 100 basis points (1 basis point = 0.01%)
+export const FEE_PERCENT_LABEL = "1%";
 
 const BPS_DENOMINATOR = BigInt(10_000);
 

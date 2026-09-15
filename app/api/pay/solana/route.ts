@@ -3,6 +3,7 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
+  TransactionInstruction,
   clusterApiUrl,
 } from "@solana/web3.js";
 import {
@@ -10,7 +11,7 @@ import {
   createTransferCheckedInstruction,
   getAssociatedTokenAddress,
 } from "@solana/spl-token";
-import { PROPZ_FEE_SOLANA, splitUnits } from "../../../lib/fee";
+import { FEE_PERCENT_LABEL, PROPZ_FEE_SOLANA, splitUnits } from "../../../lib/fee";
 import { SOLANA_USDC, validSolanaAddress } from "../../../lib/tip";
 
 // A Solana Pay "transaction request" endpoint (SIMD-approved spec wallets
@@ -18,7 +19,7 @@ import { SOLANA_USDC, validSolanaAddress } from "../../../lib/tip";
 // POST takes the payer's pubkey and returns an unsigned transaction for
 // them to sign. Propz never holds a private key here and never touches the
 // funds — it only writes down, inside the transaction the supporter signs,
-// that most of it goes to the creator and a disclosed 0.08% goes to the
+// that most of it goes to the creator and a disclosed 1% goes to the
 // Propz fee wallet.
 
 const CORS_HEADERS = {
@@ -26,6 +27,20 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
+
+// The standard SPL Memo program — writes an arbitrary UTF-8 string into the
+// transaction log. No accounts required for an unattributed memo (we're not
+// asserting the memo came from a specific signer, just attaching text), so
+// this works as a plain, optional "tip from <name>" note.
+const MEMO_PROGRAM_ID = new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+
+function memoInstruction(memo: string) {
+  return new TransactionInstruction({
+    keys: [],
+    programId: MEMO_PROGRAM_ID,
+    data: Buffer.from(memo, "utf-8"),
+  });
+}
 
 function json(data: unknown, status = 200) {
   return Response.json(data, { status, headers: CORS_HEADERS });
@@ -56,6 +71,10 @@ export async function POST(request: Request) {
   const asset = url.searchParams.get("asset") === "SOL" ? "SOL" : "USDC";
   const label = (url.searchParams.get("label") || "Propz").slice(0, 48);
   const amount = Number(url.searchParams.get("amount") || "");
+  // Strip control/newline characters — this goes on-chain, public and
+  // permanent, so keep it to a single printable line.
+  // eslint-disable-next-line no-control-regex
+  const memo = (url.searchParams.get("memo") || "").replace(/[\x00-\x1f\x7f]/g, "").trim().slice(0, 60);
 
   if (!validSolanaAddress(recipient)) {
     return json({ error: "invalid recipient address" }, 400);
@@ -116,6 +135,10 @@ export async function POST(request: Request) {
       }
     }
 
+    if (memo) {
+      transaction.add(memoInstruction(`Tip from ${memo}`));
+    }
+
     const connection = new Connection(rpcUrl(), "confirmed");
     const { blockhash } = await connection.getLatestBlockhash("confirmed");
     transaction.recentBlockhash = blockhash;
@@ -127,7 +150,7 @@ export async function POST(request: Request) {
       transaction: serialized.toString("base64"),
       message:
         feeUnits > BigInt(0)
-          ? `Propz for ${label} — includes a 0.08% Propz platform fee`
+          ? `Propz for ${label} — includes a ${FEE_PERCENT_LABEL} Propz platform fee`
           : `Propz for ${label}`,
     });
   } catch (error) {

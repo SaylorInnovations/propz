@@ -69,7 +69,7 @@ export function shortAddress(value: string) {
 // Points at our own Solana Pay "transaction request" endpoint instead of a
 // plain recipient+amount link. A static link can only ever describe one
 // recipient, and every Propz payment now settles to two (the creator, plus
-// the disclosed 0.08% Propz fee) — so wallets fetch this URL, POST their
+// the disclosed 1% Propz fee) — so wallets fetch this URL, POST their
 // public key, and get back an unsigned transaction that carries both
 // transfers for them to sign. `origin` must be an absolute origin (e.g.
 // `https://propz.example`); pass "" only when no origin is known yet, which
@@ -80,6 +80,7 @@ export function solanaPayUrl(
   asset: "SOL" | "USDC",
   label: string,
   origin: string,
+  memo = "",
 ) {
   if (!origin) return "";
   const params = new URLSearchParams({
@@ -88,6 +89,10 @@ export function solanaPayUrl(
     asset,
     label: label.slice(0, 48),
   });
+  // Optional — the supporter's own name, written on-chain via the SPL Memo
+  // program so the recipient can see who tipped them straight from the
+  // transaction, no separate message system required.
+  if (memo.trim()) params.set("memo", memo.trim().slice(0, 60));
   return `solana:${encodeURIComponent(`${origin}/api/pay/solana?${params.toString()}`)}`;
 }
 
