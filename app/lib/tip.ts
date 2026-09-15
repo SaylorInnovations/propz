@@ -80,6 +80,7 @@ export function solanaPayUrl(
   asset: "SOL" | "USDC",
   label: string,
   origin: string,
+  memo = "",
 ) {
   if (!origin) return "";
   const params = new URLSearchParams({
@@ -88,6 +89,10 @@ export function solanaPayUrl(
     asset,
     label: label.slice(0, 48),
   });
+  // Optional — the supporter's own name, written on-chain via the SPL Memo
+  // program so the recipient can see who tipped them straight from the
+  // transaction, no separate message system required.
+  if (memo.trim()) params.set("memo", memo.trim().slice(0, 60));
   return `solana:${encodeURIComponent(`${origin}/api/pay/solana?${params.toString()}`)}`;
 }
 

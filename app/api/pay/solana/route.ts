@@ -3,6 +3,7 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
+  TransactionInstruction,
   clusterApiUrl,
 } from "@solana/web3.js";
 import {
@@ -26,6 +27,20 @@ const CORS_HEADERS = {
   "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
   "Access-Control-Allow-Headers": "Content-Type",
 };
+
+// The standard SPL Memo program — writes an arbitrary UTF-8 string into the
+// transaction log. No accounts required for an unattributed memo (we're not
+// asserting the memo came from a specific signer, just attaching text), so
+// this works as a plain, optional "tip from <name>" note.
+const MEMO_PROGRAM_ID = new PublicKey("MemoSq4gqABAXKb96qnH8TysNcWxMyWCqXgDLGmfcHr");
+
+function memoInstruction(memo: string) {
+  return new TransactionInstruction({
+    keys: [],
+    programId: MEMO_PROGRAM_ID,
+    data: Buffer.from(memo, "utf-8"),
+  });
+}
 
 function json(data: unknown, status = 200) {
   return Response.json(data, { status, headers: CORS_HEADERS });
@@ -56,6 +71,10 @@ export async function POST(request: Request) {
   const asset = url.searchParams.get("asset") === "SOL" ? "SOL" : "USDC";
   const label = (url.searchParams.get("label") || "Propz").slice(0, 48);
   const amount = Number(url.searchParams.get("amount") || "");
+  // Strip control/newline characters — this goes on-chain, public and
+  // permanent, so keep it to a single printable line.
+  // eslint-disable-next-line no-control-regex
+  const memo = (url.searchParams.get("memo") || "").replace(/[\x00-\x1f\x7f]/g, "").trim().slice(0, 60);
 
   if (!validSolanaAddress(recipient)) {
     return json({ error: "invalid recipient address" }, 400);
@@ -114,6 +133,10 @@ export async function POST(request: Request) {
           createTransferCheckedInstruction(payerAta, mint, feeAta, payer, feeUnits, decimals),
         );
       }
+    }
+
+    if (memo) {
+      transaction.add(memoInstruction(`Tip from ${memo}`));
     }
 
     const connection = new Connection(rpcUrl(), "confirmed");
