@@ -1,6 +1,6 @@
 # Propz
 
-**Give credit where credit is due.**
+**Give Credit Where Credit is Due.**
 
 Propz is a non-custodial crypto tip jar. Anyone — a creator, streamer, builder,
 gamer, or a cause on a fundraising page — publishes a Propz card once, then
