@@ -15,7 +15,8 @@
     "test": "npm run build && node --test tests/rendered-html.test.mjs tests/extension-publish.test.mjs",
     "lint": "bash scripts/sites-env.sh -- eslint . --ignore-pattern dist --ignore-pattern .next",
     "db:generate": "bash scripts/sites-env.sh -- drizzle-kit generate",
-    "test:extension": "node --test tests/extension-publish.test.mjs"
+    "test:extension": "python3 scripts/package-extension.py && node --test tests/extension-publish.test.mjs tests/extension-packages.test.mjs",
+    "package:extension": "python3 scripts/package-extension.py"
   },
   "dependencies": {
     "@solana/spl-token": "0.4.15",
