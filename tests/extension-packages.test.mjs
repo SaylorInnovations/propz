@@ -4,7 +4,6 @@ import test from 'node:test';
 import { createRequire } from 'node:module';
 
 const require = createRequire(import.meta.url);
-const root = new URL('../', import.meta.url);
 const sourceManifest = require('../extension/manifest.json');
 const firefoxSettings = require('../extension/manifest.firefox.json');
 

@@ -15,11 +15,11 @@
     },
     "android": {
       "package": "com.saylorinnovations.propz",
+      "icon": "./assets/icon.png",
       "versionCode": 1,
       "adaptiveIcon": {
-        "backgroundColor": "#E6F4FE",
+        "backgroundColor": "#010718",
         "foregroundImage": "./assets/android-icon-foreground.png",
-        "backgroundImage": "./assets/android-icon-background.png",
         "monochromeImage": "./assets/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false
@@ -29,11 +29,20 @@
     },
     "plugins": [
       "expo-router",
-      "expo-sqlite"
+      "expo-sqlite",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#010718",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 220,
+          "resizeMode": "contain"
+        }
+      ]
     ],
     "extra": {
       "supportUrl": "https://saylorinnovations.com/#contact",
-      "privacyUrl": "https://propz.saylorinnovations.com/extension-privacy"
+      "privacyUrl": "https://propz.saylorinnovations.com/mobile-privacy"
     }
   }
 }

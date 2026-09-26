@@ -1,2 +1,11 @@
 import { Stack } from 'expo-router';
-export default function Layout() { return <Stack screenOptions={{ headerShown: false }} />; }
+import { StatusBar } from 'expo-status-bar';
+
+export default function Layout() {
+  return (
+    <>
+      <Stack screenOptions={{ headerShown: false }} />
+      <StatusBar style="light" />
+    </>
+  );
+}

@@ -73,7 +73,6 @@ export async function POST(request: Request) {
   const amount = Number(url.searchParams.get("amount") || "");
   // Strip control/newline characters — this goes on-chain, public and
   // permanent, so keep it to a single printable line.
-  // eslint-disable-next-line no-control-regex
   const memo = (url.searchParams.get("memo") || "").replace(/[\x00-\x1f\x7f]/g, "").trim().slice(0, 60);
 
   if (!validSolanaAddress(recipient)) {
