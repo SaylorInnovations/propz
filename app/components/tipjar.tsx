@@ -45,6 +45,7 @@ export function TipJar({
   const [asset, setAsset] = useState<Asset>(solReady ? "USDC_SOL" : "USDC_BASE");
   const [amount, setAmount] = useState("5");
   const [custom, setCustom] = useState("");
+  const [tipperName, setTipperName] = useState("");
   const [qr, setQr] = useState("");
   const [status, setStatus] = useState<"idle" | "paying" | "success" | "error">("idle");
   const [notice, setNotice] = useState("");
@@ -83,10 +84,10 @@ export function TipJar({
     if (!validAmount) return "";
     if (effectiveAsset === "USDC_BASE" && baseReady) return basePayUri(config.base, finalAmount);
     if ((effectiveAsset === "USDC_SOL" || effectiveAsset === "SOL") && solReady) {
-      return solanaPayUrl(config.solana, finalAmount, effectiveAsset === "SOL" ? "SOL" : "USDC", displayName, pageOrigin);
+      return solanaPayUrl(config.solana, finalAmount, effectiveAsset === "SOL" ? "SOL" : "USDC", displayName, pageOrigin, tipperName);
     }
     return "";
-  }, [baseReady, config.base, config.solana, displayName, effectiveAsset, finalAmount, pageOrigin, solReady, validAmount]);
+  }, [baseReady, config.base, config.solana, displayName, effectiveAsset, finalAmount, pageOrigin, solReady, tipperName, validAmount]);
 
   useEffect(() => {
     let active = true;
@@ -235,6 +236,14 @@ export function TipJar({
             <input aria-label="Custom tip amount" inputMode="decimal" min="0" onChange={(event) => setCustom(event.target.value.replace(/[^0-9.]/g, ""))} placeholder="Custom amount" type="text" value={custom} />
             <small>{assetName}</small>
           </label>
+
+          {effectiveAsset !== "USDC_BASE" && (
+            <label className="tipper-name">
+              <span>Your name (optional)</span>
+              <input maxLength={40} onChange={(event) => setTipperName(event.target.value)} placeholder="Anonymous" type="text" value={tipperName} />
+              <small>Written into the transaction so {displayName} can see who sent it.</small>
+            </label>
+          )}
 
           {!compact && paymentUri && qr && (
             <div className="qr-panel">

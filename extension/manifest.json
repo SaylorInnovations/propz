@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Propz Tip Button",
   "short_name": "Propz",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Build a crypto tip jar for your website or content. Copy a floating button, embedded card, or shareable Solana and Base link.",
   "homepage_url": "https://propz.saylorinnovations.com",
   "icons": {

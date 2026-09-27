@@ -8,7 +8,7 @@ drops it *anywhere they already have a presence*: a bio link, a stream
 overlay, a website, a video description, a GoFundMe post, a printed QR code.
 Supporters pick an amount, approve one transaction in their own wallet, and
 the funds move straight from supporter to recipient on Solana or Base. Propz
-never holds the money — it only writes a disclosed **0.08% platform fee**
+never holds the money — it only writes a disclosed **1% platform fee**
 into the same transaction the supporter signs and sees before approving.
 
 No signup, no dashboard, no custody. It's a link, an embed, or a QR code
@@ -35,12 +35,12 @@ The split is computed in `app/lib/fee.ts` (`splitUnits`) and always rounds
 the fee down, landing at zero on very small tips rather than ever asking for
 more than the number shown on the button.
 
-## The 0.08% fee, and why it's hardcoded
+## The 1% fee, and why it's hardcoded
 
 `PROPZ_FEE_SOLANA` and `PROPZ_FEE_BASE` in `app/lib/fee.ts` are fixed
 addresses, not environment variables. That's intentional: Propz is free to
 download, self-host, and modify, but every instance that keeps those
-constants routes its disclosed 0.08% fee back to the Propz operator
+constants routes its disclosed 1% fee back to the Propz operator
 (Saylor Innovations) — that's how the project stays funded. The fee is never
 hidden: it's shown on the tip button total, the jar page trust badges, the
 Studio's publish panel, and the `platformFeeBps` field of the manifest JSON.
@@ -134,7 +134,7 @@ empty and D1 is optional infrastructure this app doesn't currently need.
 | `app/jar/page.tsx` | Full-page hosted tip card (`/jar`) |
 | `app/embed/page.tsx` | Compact `<iframe>`-friendly card (`/embed`) |
 | `app/components/tipjar.tsx` | The tip card UI + wallet payment flow |
-| `app/lib/fee.ts` | The 0.08% split math and fee wallet addresses |
+| `app/lib/fee.ts` | The 1% split math and fee wallet addresses |
 | `app/lib/tip.ts` | Config parsing, address validation, payment URI builders |
 | `app/api/pay/solana/route.ts` | Solana Pay transaction-request endpoint |
 | `app/api/manifest/route.ts` | Machine-readable payment manifest (`/api/manifest`) |
@@ -163,5 +163,5 @@ against `start` with none of them reproducing it.
 
 ## License
 
-MIT — see [`LICENSE`](./LICENSE). See "The 0.08% fee, and why it's
+MIT — see [`LICENSE`](./LICENSE). See "The 1% fee, and why it's
 hardcoded" above for the one thing worth knowing before you fork it.

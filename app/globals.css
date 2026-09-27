@@ -205,6 +205,10 @@ label textarea + small { position: absolute; right: 11px; bottom: 9px; color: #5
 .custom-amount span { color: var(--accent); font-weight: 800; }
 .custom-amount input { border: 0; margin: 0; background: transparent; box-shadow: none !important; padding: 12px 9px; }
 .custom-amount small { color: #637f9d; font-size: 9px; }
+.tipper-name { display: block; margin-top: 10px; }
+.tipper-name > span { display: block; color: #9caeac; font-size: 10px; font-weight: 700; letter-spacing: .04em; margin-bottom: 6px; }
+.tipper-name input { width: 100%; border: 1px solid var(--line); border-radius: 10px; background: rgba(3,10,18,.58); color: var(--foreground); padding: 11px 12px; box-shadow: none !important; }
+.tipper-name small { display: block; color: #637f9d; font-size: 9px; margin-top: 5px; }
 .qr-panel { display: grid; grid-template-columns: 94px 1fr; align-items: center; gap: 15px; padding: 12px; border: 1px solid var(--line); border-radius: 12px; margin-top: 13px; background: rgba(255,255,255,.025); }
 .qr-panel img { width: 94px; height: 94px; display: block; }
 .qr-panel strong, .qr-panel span { display: block; }

@@ -39,4 +39,7 @@ tools and removes the content script and install-time Studio tab. Existing
 saved card fields are reused; the old enabled setting is ignored. Reload
 previously open tabs after updating from 1.0.0 to clear the former overlay.
 
+Version 1.1.1 updates the disclosed platform fee text to match the 1% rate
+(was 0.08%). No functional changes.
+
 Bump the manifest version for subsequent uploaded packages.

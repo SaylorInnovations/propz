@@ -1,4 +1,4 @@
-# Chrome Web Store submission — version 1.1.0
+# Browser marketplace submission — version 1.1.1
 
 ## Name
 Propz Tip Button
@@ -15,11 +15,11 @@ Enter your public Solana or Base wallet address, customize your jar, and choose 
 • Embedded tip card — paste the iframe code into a Custom HTML or Embed block.
 • Shareable link — add your jar to a bio, video description, post, or newsletter.
 
-Customize your display name, message, button label, and accent color. Save your settings with Chrome sync and preview your jar in a new tab.
+Customize your display name, message, button label, and accent color. Save your settings with browser sync and preview your jar in a new tab.
 
 You must paste the generated code into a website you can edit and publish that website. Installing the extension does not automatically change your site. Visitors do not need the extension. Some platforms restrict scripts or iframes; use the shareable link on those platforms.
 
-Supporters can send SOL or USDC on supported networks through the hosted Propz payment page. Payments require approval in a compatible wallet, and Base payments may require two approvals. Propz never asks for private keys or seed phrases and never takes custody of funds. Payments include a disclosed 0.08% platform fee.
+Supporters can send SOL or USDC on supported networks through the hosted Propz payment page. Payments require approval in a compatible wallet, and Base payments may require two approvals. Propz never asks for private keys or seed phrases and never takes custody of funds. Payments include a disclosed 1% platform fee.
 
 No Propz account required. Built by Saylor Innovations.
 
@@ -37,7 +37,7 @@ iframe embed code, or a shareable link for publishing their jar.
 
 ## Permission justification: storage
 Save the creator's public receiving addresses and card appearance settings
-using Chrome storage sync so they can reuse their configuration.
+using browser storage sync so they can reuse their configuration.
 
 ## Remote code answer
 The extension does not execute remotely hosted code. Its popup and code
@@ -51,7 +51,7 @@ https://propz.saylorinnovations.com/extension-privacy
 Deploy and verify the revised policy before submitting this version.
 
 ## Privacy practices
-Generating code runs locally. Saving uses Chrome sync. Copy writes to the
+Generating code runs locally. Saving uses browser sync. Copy writes to the
 clipboard. Preview sends public wallet addresses and card text to the hosted
 Propz site in its URL; publishing code or links makes these details public.
 Hosting receives ordinary request metadata. No browsing history, page
@@ -75,7 +75,7 @@ in a Custom HTML page and open the shareable link. Preview opens a normal
 tab. No access to arbitrary browsing pages is requested.
 
 ## Store assets and final steps
-- Upload the new 1.1.0 ZIP to the existing dashboard item.
+- Upload the matching 1.1.1 package from `dist/extensions/` to each dashboard.
 - Replace old copy describing a private browsing overlay.
 - [x] Screenshot of the builder popup, composited into a browser-window
   mockup showing the floating widget use case — 1280×800, full bleed.

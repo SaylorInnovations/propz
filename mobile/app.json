@@ -1,0 +1,48 @@
+{
+  "expo": {
+    "name": "Propz Tip Jar",
+    "slug": "propz-tip-jar",
+    "scheme": "propz",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "dark",
+    "backgroundColor": "#050d18",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.saylorinnovations.propz",
+      "buildNumber": "1"
+    },
+    "android": {
+      "package": "com.saylorinnovations.propz",
+      "icon": "./assets/icon.png",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#010718",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-sqlite",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#010718",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 220,
+          "resizeMode": "contain"
+        }
+      ]
+    ],
+    "extra": {
+      "supportUrl": "https://saylorinnovations.com/#contact",
+      "privacyUrl": "https://propz.saylorinnovations.com/mobile-privacy"
+    }
+  }
+}

@@ -4,7 +4,7 @@ import { useMemo, useState } from "react";
 import { Brand } from "./components/brand";
 import { BoltIcon, CheckIcon, CodeIcon, CopyIcon, ExternalIcon, QrIcon, WalletIcon, WidgetIcon } from "./components/icons";
 import { TipJar } from "./components/tipjar";
-import { FEE_PERCENT_LABEL } from "./lib/fee";
+import { FEE_BPS, FEE_PERCENT_LABEL } from "./lib/fee";
 import { useBrowserUrl } from "./lib/browser-url";
 import {
   configParams,
@@ -238,7 +238,7 @@ export default function Studio() {
   "protocol": "propz/1",
   "recipient": "Your name",
   "noncustodial": true,
-  "platformFeeBps": 8,
+  "platformFeeBps": ${Number(FEE_BPS)},
   "payments": [
     {
       "network": "solana:mainnet",
